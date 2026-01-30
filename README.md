@@ -30,10 +30,3 @@ This project was created using `bun init` in bun v1.3.7. [Bun](https://bun.com) 
 - [x] [ ] [PATCH]* /post-type/:slug/toggle-visibility
 
 - [x] [ ] [PATCH]* /post-type/:slug
-
-- [ ] Criar o Repositório do Prisma
-- [ ] Criar o Repositório do Redis
-
-- [ ] Criar Repositório de Testes
-- [ ] Criar Testes Unitários para os Serviços de Domínio
-- [ ] Crar Documentação para os DTOs
