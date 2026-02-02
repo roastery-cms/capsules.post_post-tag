@@ -51,6 +51,53 @@ describe("PostTagRepository (Test)", () => {
 		});
 	});
 
+	describe("findById", () => {
+		it("should find a post tag by id", async () => {
+			const postTag = PostTag.make({
+				name: "Findable Tag",
+				slug: "findable-tag",
+				hidden: false,
+			});
+
+			await repository.create(postTag);
+
+			const found = await repository.findById(postTag.id);
+
+			expect(found).not.toBeNull();
+			expect(found?.id).toBe(postTag.id);
+			expect(found?.name).toBe("Findable Tag");
+			expect(found?.slug).toBe("findable-tag");
+		});
+
+		it("should return null when tag is not found", async () => {
+			const found = await repository.findById("non-existent-id");
+
+			expect(found).toBeNull();
+		});
+
+		it("should find the correct tag among multiple tags", async () => {
+			const tag1 = PostTag.make({
+				name: "Tag 1",
+				slug: "tag-1",
+				hidden: false,
+			});
+			const tag2 = PostTag.make({
+				name: "Tag 2",
+				slug: "tag-2",
+				hidden: false,
+			});
+
+			await repository.create(tag1);
+			await repository.create(tag2);
+
+			const found = await repository.findById(tag2.id);
+
+			expect(found).not.toBeNull();
+			expect(found?.id).toBe(tag2.id);
+			expect(found?.name).toBe("Tag 2");
+		});
+	});
+
 	describe("findBySlug", () => {
 		it("should find a post tag by slug", async () => {
 			const postTag = PostTag.make({

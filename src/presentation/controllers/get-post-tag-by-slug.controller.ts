@@ -5,7 +5,7 @@ import { Elysia } from "elysia";
 export const GetPostTagBySlugController = new Elysia()
 	.decorate("service", makeGetPostTagBySlugUseCase())
 	.get(
-		"/:slug",
+		"/by-slug/:slug",
 		({ params, service }) => {
 			return service.run(params.slug);
 		},

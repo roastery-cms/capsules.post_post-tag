@@ -17,6 +17,14 @@ export class PostTagRepository implements IPostTagRepository {
 		}
 	}
 
+	async findById(id: string): Promise<IUnmountedPostTag | null> {
+		const targetPostTag = await prisma.postTag.findUnique({ where: { id } });
+
+		if (!targetPostTag) return null;
+
+		return parsePrismaDateTimeToISOString(targetPostTag);
+	}
+
 	async findBySlug(slug: string): Promise<IUnmountedPostTag | null> {
 		const targetPostTag = await prisma.postTag.findUnique({
 			where: { slug },

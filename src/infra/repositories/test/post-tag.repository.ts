@@ -10,6 +10,12 @@ export class PostTagRepository implements IPostTagRepository {
 		this.postTags.push(data.unpack());
 	}
 
+	async findById(id: string): Promise<IUnmountedPostTag | null> {
+		const targetPostTag = this.postTags.find((tag) => tag.id === id);
+
+		return targetPostTag ?? null;
+	}
+
 	async findBySlug(slug: string): Promise<IUnmountedPostTag | null> {
 		const targetPostTag = this.postTags.find((tag) => tag.slug === slug);
 

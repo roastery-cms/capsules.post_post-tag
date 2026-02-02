@@ -14,6 +14,32 @@ export class PostTagRepository implements IPostTagRepository {
 		await this.invalidateListCache();
 	}
 
+	async findById(id: string): Promise<IUnmountedPostTag | null> {
+		const storedPostTag = await redis.get(`post@post-tag::$${id}`);
+
+		if (storedPostTag)
+			return storedPostTag === null ? null : JSON.parse(storedPostTag);
+
+		const targetPostTag = await this.repository.findById(id);
+
+		if (!targetPostTag) return null;
+
+		await redis.set(
+			`post@post-tag::$${id}`,
+			JSON.stringify(targetPostTag),
+			"EX",
+			this.postTagCacheExpirationTime,
+		);
+		await redis.set(
+			`post@post-tag::${targetPostTag.slug}`,
+			JSON.stringify(targetPostTag),
+			"EX",
+			this.postTagCacheExpirationTime,
+		);
+
+		return targetPostTag;
+	}
+
 	async findBySlug(slug: string): Promise<IUnmountedPostTag | null> {
 		const storedPostTag = await redis.get(`post@post-tag::${slug}`);
 
@@ -26,6 +52,12 @@ export class PostTagRepository implements IPostTagRepository {
 
 		await redis.set(
 			`post@post-tag::${slug}`,
+			JSON.stringify(targetPostTag),
+			"EX",
+			this.postTagCacheExpirationTime,
+		);
+		await redis.set(
+			`post@post-tag::$${targetPostTag.id}`,
 			JSON.stringify(targetPostTag),
 			"EX",
 			this.postTagCacheExpirationTime,
@@ -52,12 +84,26 @@ export class PostTagRepository implements IPostTagRepository {
 	}
 
 	async update(data: PostTag): Promise<void> {
-		await redis.del(`post@post-tag::${data.slug}`);
+		const _cachedPostTag = await redis.get(`post@post-tag::$${data.id}`);
+
+		if (_cachedPostTag) {
+			const cachedPostTag: IUnmountedPostTag = JSON.parse(_cachedPostTag);
+
+			await redis.del(`post@post-tag::$${cachedPostTag.id}`);
+			await redis.del(`post@post-tag::${cachedPostTag.slug}`);
+		}
 
 		await this.repository.update(data);
 
 		await redis.set(
 			`post@post-tag::${data.slug}`,
+			JSON.stringify(data.unpack()),
+			"EX",
+			this.postTagCacheExpirationTime,
+		);
+
+		await redis.set(
+			`post@post-tag::$${data.id}`,
 			JSON.stringify(data.unpack()),
 			"EX",
 			this.postTagCacheExpirationTime,

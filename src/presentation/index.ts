@@ -1,5 +1,6 @@
 import { Elysia } from "elysia";
 import { CreatePostTagController } from "./controllers/create-post-tag.controller";
+import { GetPostTagByIdController } from "./controllers/get-post-tag-by-id.controller";
 import { GetPostTagBySlugController } from "./controllers/get-post-tag-by-slug.controller";
 import { GetPostTagNumberOfPagesController } from "./controllers/get-post-tag-number-of-pages.controller";
 import { GetPostTagsByPageController } from "./controllers/get-post-tags-by-page.controller";
@@ -8,6 +9,7 @@ import { UpdatePostTagController } from "./controllers/update-post-tag.controlle
 
 export const PostTagRoutes = new Elysia({ prefix: "/post-tag" })
 	.use(CreatePostTagController)
+	.use(GetPostTagByIdController)
 	.use(GetPostTagBySlugController)
 	.use(GetPostTagNumberOfPagesController)
 	.use(GetPostTagsByPageController)
