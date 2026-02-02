@@ -1,9 +1,12 @@
 import type { PostTag } from "@/domain/post-tag";
 import type { IPostTagRepository } from "@/domain/types/post-tag.repository.interface";
 import type { IUnmountedPostTag } from "@/domain/types/unmounted-post-tag.interface";
+import {
+	prisma,
+	prismaErrorManager,
+} from "@caffeine-packages/post.db.prisma-drive";
+import { parsePrismaDateTimeToISOString } from "@caffeine-packages/post.db.prisma-drive/helpers";
 import { MAX_ITEMS_PER_QUERY } from "@caffeine/constants";
-import { prisma, prismaErrorManager } from "@caffeine/prisma-drive";
-import { parsePrismaDateTimeToISOString } from "@caffeine/prisma-drive/helpers";
 
 export class PostTagRepository implements IPostTagRepository {
 	async create(data: PostTag): Promise<void> {
