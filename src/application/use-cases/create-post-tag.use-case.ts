@@ -10,13 +10,13 @@ export class CreatePostTagUseCase {
 	public constructor(private readonly repository: IPostTagRepository) {}
 
 	public async run(data: CreatePostTagDTO): Promise<IUnmountedPostTag> {
-		const postTagUnimquenessChecker = new PostTagUniquenessChecker(
+		const postTagUniquenessChecker = new PostTagUniquenessChecker(
 			this.repository,
 		);
 
 		const slug = slugify(data.name);
 
-		if (await postTagUnimquenessChecker.run(slug))
+		if (await postTagUniquenessChecker.run(slug))
 			throw new ResourceAlreadyExistsException("post@post-tag");
 
 		const targetPostTag = PostTag.make({
