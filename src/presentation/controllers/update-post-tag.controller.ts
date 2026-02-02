@@ -8,7 +8,7 @@ export const UpdatePostTagController = new Elysia()
 	.use(AuthGuard({ layerName: "post@post-tag" }))
 	.decorate("service", makeUpdatePostTagUseCase())
 	.patch(
-		"/:slug",
+		"/by-slug/:slug",
 		({ params, body, service }) => {
 			return service.run(params.slug, body);
 		},

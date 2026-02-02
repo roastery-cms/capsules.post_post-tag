@@ -7,7 +7,7 @@ export const TogglePostTagVisibilityController = new Elysia()
 	.use(AuthGuard({ layerName: "post@post-tag" }))
 	.decorate("service", makeTogglePostTagVisibilityUseCase())
 	.patch(
-		"/:slug/toggle-visibility",
+		"/by-slug/:slug/toggle-visibility",
 		({ params, service }) => {
 			return service.run(params.slug);
 		},
