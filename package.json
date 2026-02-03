@@ -48,7 +48,9 @@
     "vitest": "^4.0.18"
   },
   "peerDependencies": {
-    "typescript": "^5"
+    "typescript": "^5",
+    "@caffeine/auth": "link:@caffeine/auth",
+    "@caffeine/constants": "link:@caffeine/constants"
   },
   "dependencies": {
     "@caffeine/auth": "link:@caffeine/auth",
