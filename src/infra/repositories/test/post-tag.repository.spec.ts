@@ -69,6 +69,24 @@ describe("PostTagRepository (Test)", () => {
 			expect(found?.slug).toBe("findable-tag");
 		});
 
+		it("should preserve timestamps when retrieving", async () => {
+			const postTag = PostTag.make({
+				name: "Timestamp Tag",
+				slug: "timestamp-tag",
+				hidden: false,
+			});
+
+			const createdAt = postTag.createdAt;
+			const updatedAt = postTag.updatedAt;
+
+			await repository.create(postTag);
+
+			const found = await repository.findById(postTag.id);
+
+			expect(found?.createdAt).toEqual(createdAt);
+			expect(found?.updatedAt).toEqual(updatedAt);
+		});
+
 		it("should return null when tag is not found", async () => {
 			const found = await repository.findById("non-existent-id");
 
@@ -236,17 +254,16 @@ describe("PostTagRepository (Test)", () => {
 			await repository.create(postTag);
 
 			// Update the tag
-			postTag.name = "Updated Name";
-			postTag.slug = "updated-slug";
-			postTag.hidden = true;
+			postTag.rename("Updated Name");
+			postTag.toggleVisibility();
 
 			await repository.update(postTag);
 
-			const found = await repository.findBySlug("updated-slug");
+			const found = await repository.findBySlug("updated-name");
 
 			expect(found).not.toBeNull();
 			expect(found?.name).toBe("Updated Name");
-			expect(found?.slug).toBe("updated-slug");
+			expect(found?.slug).toBe("updated-name");
 			expect(found?.hidden).toBe(true);
 		});
 
@@ -265,10 +282,11 @@ describe("PostTagRepository (Test)", () => {
 			await repository.create(tag1);
 			await repository.create(tag2);
 
-			tag1.name = "Updated Tag 1";
+			tag1.rename("Updated Tag 1");
 			await repository.update(tag1);
 
-			const found1 = await repository.findBySlug("tag-1");
+			// Note: slug changes when name changes
+			const found1 = await repository.findBySlug("updated-tag-1");
 			const found2 = await repository.findBySlug("tag-2");
 
 			expect(found1?.name).toBe("Updated Tag 1");
@@ -289,9 +307,9 @@ describe("PostTagRepository (Test)", () => {
 		});
 	});
 
-	describe("length", () => {
+	describe("count", () => {
 		it("should return 0 when repository is empty", async () => {
-			const count = await repository.length();
+			const count = await repository.count();
 
 			expect(count).toBe(0);
 		});
@@ -311,7 +329,7 @@ describe("PostTagRepository (Test)", () => {
 			await repository.create(tag1);
 			await repository.create(tag2);
 
-			const count = await repository.length();
+			const count = await repository.count();
 
 			expect(count).toBe(2);
 		});
@@ -338,7 +356,7 @@ describe("PostTagRepository (Test)", () => {
 			repository.clear();
 
 			expect(repository.getAll()).toHaveLength(0);
-			expect(await repository.length()).toBe(0);
+			expect(await repository.count()).toBe(0);
 		});
 	});
 
