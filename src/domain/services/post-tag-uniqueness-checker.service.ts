@@ -4,6 +4,6 @@ export class PostTagUniquenessChecker {
 	public constructor(private readonly repository: IPostTagRepository) {}
 
 	public async run(slug: string): Promise<boolean> {
-		return !!(await this.repository.findBySlug(slug));
+		return !(await this.repository.findBySlug(slug));
 	}
 }

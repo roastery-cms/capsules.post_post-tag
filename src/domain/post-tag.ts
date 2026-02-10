@@ -1,15 +1,28 @@
-import { Entity, Schema } from "@caffeine/models";
-import type { IUnmountedPostTag } from "./types/unmounted-post-tag.interface";
+import { Entity } from "@caffeine/models";
 import type { IPostTag } from "./types";
 import { BuildPostTagDTO } from "./dtos/build-post-tag.dto";
 import type { EntityDTO } from "@caffeine/models/dtos";
 import { InvalidDomainDataException } from "@caffeine/errors/domain";
 import { makeEntityFactory } from "@caffeine/models/factories";
+import { DefinedStringVO, SlugVO } from "@caffeine/models/value-objects";
+import { Schema } from "@caffeine/models/schema";
 
-export class PostTag extends Entity<IUnmountedPostTag> implements IPostTag {
-	public name: string;
-	public slug: string;
-	public hidden: boolean;
+export class PostTag extends Entity implements IPostTag {
+	private _name: DefinedStringVO;
+	private _slug: SlugVO;
+	private _hidden: boolean;
+
+	public get name() {
+		return this._name.value;
+	}
+
+	public get slug() {
+		return this._slug.value;
+	}
+
+	public get hidden() {
+		return this._hidden;
+	}
 
 	private constructor(
 		initialProperties: BuildPostTagDTO,
@@ -17,9 +30,17 @@ export class PostTag extends Entity<IUnmountedPostTag> implements IPostTag {
 	) {
 		super(entityProps);
 
-		this.name = initialProperties.name;
-		this.hidden = initialProperties.hidden;
-		this.slug = initialProperties.slug;
+		this._name = DefinedStringVO.make(initialProperties.name, {
+			name: "name",
+			layer: "post@post-tag",
+		});
+
+		this._hidden = initialProperties.hidden;
+
+		this._slug = SlugVO.make(initialProperties.slug, {
+			name: "slug",
+			layer: "post@post-tag",
+		});
 	}
 
 	public static make(
@@ -34,9 +55,22 @@ export class PostTag extends Entity<IUnmountedPostTag> implements IPostTag {
 		return new PostTag(initialProperties, entityProps);
 	}
 
-	public override unpack(): IUnmountedPostTag {
-		const { unpack: _, ...content } = this;
+	public rename(value: string): void {
+		this._name = DefinedStringVO.make(value, {
+			name: "name",
+			layer: "post@post-tag",
+		});
 
-		return content;
+		this._slug = SlugVO.make(value, {
+			name: "slug",
+			layer: "post@post-tag",
+		});
+
+		this.update();
+	}
+
+	public toggleVisibility(): void {
+		this._hidden = !this._hidden;
+		this.update();
 	}
 }
