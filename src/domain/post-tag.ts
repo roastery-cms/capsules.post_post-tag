@@ -1,11 +1,9 @@
 import { Entity } from "@caffeine/models";
 import type { IPostTag } from "./types";
-import { BuildPostTagDTO } from "./dtos/build-post-tag.dto";
+import type { BuildPostTagDTO } from "./dtos/build-post-tag.dto";
 import type { EntityDTO } from "@caffeine/models/dtos";
-import { InvalidDomainDataException } from "@caffeine/errors/domain";
 import { makeEntityFactory } from "@caffeine/models/factories";
 import { DefinedStringVO, SlugVO } from "@caffeine/models/value-objects";
-import { Schema } from "@caffeine/models/schema";
 
 export class PostTag extends Entity implements IPostTag {
 	private _name: DefinedStringVO;
@@ -47,10 +45,9 @@ export class PostTag extends Entity implements IPostTag {
 		initialProperties: BuildPostTagDTO,
 		entityProps?: EntityDTO,
 	): PostTag {
-		if (!Schema.make(BuildPostTagDTO).match(initialProperties))
-			throw new InvalidDomainDataException("post@post-tag");
-
 		entityProps = entityProps ?? makeEntityFactory();
+
+		Entity.prepare(entityProps);
 
 		return new PostTag(initialProperties, entityProps);
 	}

@@ -1,1 +1,1 @@
-export { UnmountedPostTagDTO } from "./unmounted-post-tag.dto";
+export { UnpackedPostTagDTO } from "./unpacked-post-tag.dto";
