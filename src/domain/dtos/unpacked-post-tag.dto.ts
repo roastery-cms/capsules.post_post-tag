@@ -1,4 +1,4 @@
-import { EntityDTO } from "@caffeine/models/dtos";
+import { EntityDTO } from "@caffeine/entity/dtos";
 import { BuildPostTagDTO } from "./build-post-tag.dto";
 import { t } from "@caffeine/models";
 

@@ -1,9 +1,10 @@
-import { Entity } from "@caffeine/models";
 import type { IPostTag } from "./types";
 import type { BuildPostTagDTO } from "./dtos/build-post-tag.dto";
-import type { EntityDTO } from "@caffeine/models/dtos";
-import { makeEntityFactory } from "@caffeine/models/factories";
-import { DefinedStringVO, SlugVO } from "@caffeine/models/value-objects";
+import Entity from "@caffeine/entity";
+import { DefinedStringVO, SlugVO } from "@caffeine/value-objects";
+import type { EntityDTO } from "@caffeine/entity/dtos";
+import { makeEntityFactory } from "@caffeine/entity/factories";
+import { AutoUpdate } from "@caffeine/entity/decorators";
 
 export class PostTag extends Entity implements IPostTag {
 	private _name: DefinedStringVO;
@@ -35,7 +36,7 @@ export class PostTag extends Entity implements IPostTag {
 
 		this._hidden = initialProperties.hidden;
 
-		this._slug = SlugVO.make(initialProperties.slug, {
+		this._slug = SlugVO.make(initialProperties.slug ?? initialProperties.name, {
 			name: "slug",
 			layer: "post@post-tag",
 		});
@@ -43,31 +44,35 @@ export class PostTag extends Entity implements IPostTag {
 
 	public static make(
 		initialProperties: BuildPostTagDTO,
-		entityProps?: EntityDTO,
+		initialEntityProps?: EntityDTO,
 	): PostTag {
-		entityProps = entityProps ?? makeEntityFactory();
+		const entityProps = initialEntityProps ?? makeEntityFactory();
 
 		Entity.prepare(entityProps);
 
 		return new PostTag(initialProperties, entityProps);
 	}
 
-	public rename(value: string): void {
+	@AutoUpdate
+	public rename(value: string, updateSlug: boolean = true): void {
 		this._name = DefinedStringVO.make(value, {
 			name: "name",
 			layer: "post@post-tag",
 		});
 
+		if (updateSlug) this.reslug(value);
+	}
+
+	@AutoUpdate
+	public reslug(value: string): void {
 		this._slug = SlugVO.make(value, {
 			name: "slug",
 			layer: "post@post-tag",
 		});
-
-		this.update();
 	}
 
+	@AutoUpdate
 	public toggleVisibility(): void {
 		this._hidden = !this._hidden;
-		this.update();
 	}
 }

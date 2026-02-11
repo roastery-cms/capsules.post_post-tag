@@ -8,7 +8,12 @@ export const UnpackPostTag = {
 		name,
 		slug,
 		hidden,
-	}: IPostTag): IUnpackedPostTag => {
-		return { id, createdAt, updatedAt, name, slug, hidden };
-	},
+	}: IPostTag): IUnpackedPostTag => ({
+		id,
+		createdAt,
+		hidden,
+		name,
+		slug,
+		updatedAt,
+	}),
 } as const;

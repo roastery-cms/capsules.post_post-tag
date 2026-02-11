@@ -1,4 +1,4 @@
-import type { IEntity } from "@caffeine/models/types";
+import type { IEntity } from "@caffeine/entity/types";
 
 export interface IUnpackedPostTag extends IEntity {
 	name: string;

@@ -7,11 +7,14 @@ export const BuildPostTagDTO = t.Object(
 			examples: ["Review"],
 			minLength: 1,
 		}),
-		slug: t.String({
-			description:
-				"The unique slug identifier derived from the name (e.g., 'my-adventures').",
-			examples: ["my-adventures"],
-		}),
+		slug: t.Optional(
+			t.String({
+				description:
+					"The unique slug identifier derived from the name (e.g., 'my-adventures').",
+				examples: ["my-adventures"],
+				minLength: 1,
+			}),
+		),
 		hidden: t.Boolean({
 			description:
 				"Indicates whether the post tag is hidden in the user interface.",
