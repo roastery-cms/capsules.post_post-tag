@@ -20,13 +20,10 @@ This project was created using `bun init` in bun v1.3.7. [Bun](https://bun.com) 
 - [x] [x] [POST]* /post-tag
 - Criar um novo post-type
 
-- [x] [x] [GET] /post-type/:slug
+- [x] [x] [GET] /post-tag/:id-or-slug
 - Consulta um determinado post-type
 
-- [x] [x] [GET] /post-type/number-of-pages
+- [x] [x] [GET] /post-tag?page={{ value: number }}
 
-- [x] [x] [GET] /post-type?page={{value: number}}
-
-- [x] [x] [PATCH]* /post-type/:slug/toggle-visibility
-
-- [x] [x] [PATCH]* /post-type/:slug
+- [x] [x] [PATCH]* /post-type/:id-or-slug/toggle-visibility
+- [x] [x] [PATCH]* /post-type/:id-or-slug

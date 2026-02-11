@@ -1,12 +1,12 @@
 import { BuildPostTag } from "@/domain/services/build-post-tag.service";
 import type { IPostTagRepository } from "@/domain/types/post-tag.repository.interface";
-import type { IUnmountedPostTag } from "@/domain/types/unmounted-post-tag.interface";
+import type { IUnpackedPostTag } from "@/domain/types/unpacked-post-tag.interface";
 import { ResourceNotFoundException } from "@caffeine/errors/application";
 
 export class TogglePostTagVisibilityUseCase {
 	constructor(private readonly repository: IPostTagRepository) {}
 
-	public async run(slug: string): Promise<IUnmountedPostTag> {
+	public async run(slug: string): Promise<IUnpackedPostTag> {
 		const _targetPostTag = await this.repository.findBySlug(slug);
 
 		if (!_targetPostTag) throw new ResourceNotFoundException("post@post-tag");

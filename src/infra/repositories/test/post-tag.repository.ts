@@ -5,6 +5,9 @@ import type { IUnpackedPostTag } from "@/domain/types/unpacked-post-tag.interfac
 import { MAX_ITEMS_PER_QUERY } from "@caffeine/constants";
 
 export class PostTagRepository implements IPostTagRepository {
+	findManyByIds(ids: string[]): Promise<Array<IPostTag | null>> {
+		throw new Error("Method not implemented.");
+	}
 	private postTags: IUnpackedPostTag[] = [];
 
 	async create(data: PostTag): Promise<void> {

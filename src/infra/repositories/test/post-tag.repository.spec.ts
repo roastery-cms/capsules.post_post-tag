@@ -51,6 +51,14 @@ describe("PostTagRepository (Test)", () => {
 		});
 	});
 
+	describe("findManyByIds", () => {
+		it("should throw error as method is not implemented", () => {
+			expect(() => repository.findManyByIds(["any-id"])).toThrow(
+				"Method not implemented.",
+			);
+		});
+	});
+
 	describe("findById", () => {
 		it("should find a post tag by id", async () => {
 			const postTag = PostTag.make({

@@ -1,7 +1,4 @@
 import type { IEntity } from "@caffeine/entity/types";
+import type { IRawPostTag } from "./raw-post-tag.interface";
 
-export interface IUnpackedPostTag extends IEntity {
-	name: string;
-	slug: string;
-	hidden: boolean;
-}
+export interface IUnpackedPostTag extends IEntity, IRawPostTag {}

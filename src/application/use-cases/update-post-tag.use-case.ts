@@ -1,6 +1,6 @@
 import type { IPostTagRepository } from "@/domain/types/post-tag.repository.interface";
 import type { UpdatePostTagDTO } from "../dtos/update-post-tag.dto";
-import type { IUnmountedPostTag } from "@/domain/types/unmounted-post-tag.interface";
+import type { IUnpackedPostTag } from "@/domain/types/unpacked-post-tag.interface";
 import { ResourceNotFoundException } from "@caffeine/errors/application";
 import { slugify } from "@caffeine/models/helpers";
 import { BuildPostTag } from "@/domain/services/build-post-tag.service";
@@ -11,7 +11,7 @@ export class UpdatePostTagUseCase {
 	public async run(
 		slug: string,
 		content: UpdatePostTagDTO,
-	): Promise<IUnmountedPostTag> {
+	): Promise<IUnpackedPostTag> {
 		const _targetPostTag = await this.repository.findBySlug(slug);
 
 		if (!_targetPostTag) throw new ResourceNotFoundException("post@post-tag");

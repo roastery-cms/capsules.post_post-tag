@@ -21,6 +21,8 @@
 		"noUncheckedIndexedAccess": true,
 		"noImplicitOverride": true,
 
+		"experimentalDecorators": true,
+
 		// Some stricter flags (disabled by default)
 		"noUnusedLocals": false,
 		"noUnusedParameters": false,
