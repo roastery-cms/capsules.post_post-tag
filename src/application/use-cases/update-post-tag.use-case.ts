@@ -2,15 +2,22 @@ import type { IPostTagWriter } from "@/domain/types/post-tag-writer.interface";
 import type { UpdatePostTagDTO } from "../dtos/update-post-tag.dto";
 import type { FindPostTagUseCase } from "./find-post-tag.use-case";
 import { ResourceNotFoundException } from "@caffeine/errors/application";
-import type { IUnpackedPostTag } from "@/domain/types";
+import type { IPostTag, IUnpackedPostTag } from "@/domain/types";
 import { PostTag } from "@/domain";
-import { UnpackPostTagService } from "@/domain/services";
-import { InvalidOperationException } from "@caffeine/errors/application";
+import {
+	InvalidOperationException,
+	ResourceAlreadyExistsException,
+} from "@caffeine/errors/application";
+import { Mapper } from "@caffeine/entity";
+import { slugify } from "@caffeine/entity/helpers";
+import { EntitySource } from "@caffeine/entity/symbols";
+import type { IPostTagUniquenessCheckerService } from "@/domain/types/services";
 
 export class UpdatePostTagUseCase {
 	public constructor(
 		private readonly writer: IPostTagWriter,
 		private readonly findPostTag: FindPostTagUseCase,
+		private readonly uniquenessChecker: IPostTagUniquenessCheckerService,
 	) {}
 
 	public async run(
@@ -40,12 +47,32 @@ export class UpdatePostTagUseCase {
 			);
 
 		if (content.name) targetPostTag.rename(content.name);
-		if (content.name && updateSlug) targetPostTag.reslug(content.name);
-		if (content.slug) targetPostTag.reslug(content.slug);
-		if (!!content.hidden) targetPostTag.changeVisibility(content.hidden);
+
+		if (content.name && updateSlug) {
+			await this.validateSlugUniqueness(targetPostTag, content.name);
+			targetPostTag.reslug(content.name);
+		}
+
+		if (content.slug) {
+			await this.validateSlugUniqueness(targetPostTag, content.slug);
+			targetPostTag.reslug(content.slug);
+		}
+
+		if (typeof content.hidden === "boolean")
+			targetPostTag.changeVisibility(content.hidden);
 
 		await this.writer.update(targetPostTag);
 
-		return UnpackPostTagService.run(targetPostTag);
+		return Mapper.toDTO(targetPostTag);
+	}
+
+	private async validateSlugUniqueness(postTag: IPostTag, value: string) {
+		value = slugify(value);
+		if (postTag.slug === value) return;
+
+		const hasPostTagWithSameSlug = await this.uniquenessChecker.run(value);
+
+		if (hasPostTagWithSameSlug)
+			throw new ResourceAlreadyExistsException(postTag[EntitySource]);
 	}
 }

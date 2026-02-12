@@ -11,7 +11,7 @@ export class PostTagRepository implements IPostTagRepository {
 
 	private postTags: IUnpackedPostTag[] = [];
 
-	async create(data: PostTag): Promise<void> {
+	async create(data: IPostTag): Promise<void> {
 		this.postTags.push({
 			id: data.id,
 			createdAt: data.createdAt,
@@ -45,7 +45,7 @@ export class PostTagRepository implements IPostTagRepository {
 			.map((tag) => this.toDomain(tag));
 	}
 
-	async update(data: PostTag): Promise<void> {
+	async update(data: IPostTag): Promise<void> {
 		const index = this.postTags.findIndex((tag) => tag.id === data.id);
 
 		if (index === -1) return;
@@ -58,7 +58,7 @@ export class PostTagRepository implements IPostTagRepository {
 		};
 	}
 
-	private toDomain(tag: IUnpackedPostTag): PostTag {
+	private toDomain(tag: IUnpackedPostTag): IPostTag {
 		const { id: tagId, createdAt, updatedAt, ...props } = tag;
 		return PostTag.make(props, { id: tagId, createdAt, updatedAt });
 	}

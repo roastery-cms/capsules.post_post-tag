@@ -2,20 +2,21 @@ import type { IMakePostTag, IPostTag } from "./types";
 import { Entity } from "@caffeine/entity";
 import { DefinedStringVO, SlugVO } from "@caffeine/value-objects";
 import type { EntityDTO } from "@caffeine/entity/dtos";
-import { makeEntityFactory } from "@caffeine/entity/factories";
+import {
+	EntityContext,
+	EntitySchema,
+	EntitySource,
+} from "@caffeine/entity/symbols";
+import { makeEntity } from "@caffeine/entity/factories";
 import { AutoUpdate } from "@caffeine/entity/decorators";
 import type { IValueObjectMetadata } from "@caffeine/value-objects/types";
-import { UnpackedPostTagDTO } from "./dtos";
-import { Schema } from "@caffeine/schema";
-// TODO: Atualizar os testes unitários
+import type { Schema } from "@caffeine/schema";
+import { UnpackedPostTagSchema } from "./schemas";
 
-export class PostTag
-	extends Entity<typeof UnpackedPostTagDTO>
-	implements IPostTag
-{
-	public override readonly __schema: Schema<typeof UnpackedPostTagDTO> =
-		Schema.make(UnpackedPostTagDTO);
-	public override readonly __source: string = "post@post-tag";
+export class PostTag extends Entity<UnpackedPostTagSchema> implements IPostTag {
+	public override readonly [EntitySource]: string = "post@post-tag";
+	public override readonly [EntitySchema]: Schema<UnpackedPostTagSchema> =
+		UnpackedPostTagSchema;
 
 	private _name: DefinedStringVO;
 	private _slug: SlugVO;
@@ -39,18 +40,18 @@ export class PostTag
 	) {
 		super(entityProps);
 
-		this._name = DefinedStringVO.make(name, this.getPropertyContext("name"));
+		this._name = DefinedStringVO.make(name, this[EntityContext]("name"));
 
 		this._hidden = hidden === true;
 
-		this._slug = SlugVO.make(slug ?? name, this.getPropertyContext("slug"));
+		this._slug = SlugVO.make(slug ?? name, this[EntityContext]("slug"));
 	}
 
 	public static make(
 		initialProperties: IMakePostTag,
 		_entityProps?: EntityDTO,
-	): PostTag {
-		const entityProps = _entityProps ?? makeEntityFactory();
+	): IPostTag {
+		const entityProps = _entityProps ?? makeEntity();
 
 		Entity.prepare(entityProps);
 
@@ -59,12 +60,12 @@ export class PostTag
 
 	@AutoUpdate
 	public rename(value: string): void {
-		this._name = DefinedStringVO.make(value, this.getPropertyContext("name"));
+		this._name = DefinedStringVO.make(value, this[EntityContext]("name"));
 	}
 
 	@AutoUpdate
 	public reslug(value: string): void {
-		this._slug = SlugVO.make(value, this.getPropertyContext("slug"));
+		this._slug = SlugVO.make(value, this[EntityContext]("slug"));
 	}
 
 	@AutoUpdate
@@ -72,12 +73,10 @@ export class PostTag
 		this._hidden = value;
 	}
 
-	protected override getPropertyContext(
-		propertyName: string,
-	): IValueObjectMetadata {
+	public override [EntityContext](name: string): IValueObjectMetadata {
 		return {
-			name: propertyName,
-			source: this.__source,
+			name,
+			source: this[EntitySource],
 		};
 	}
 }

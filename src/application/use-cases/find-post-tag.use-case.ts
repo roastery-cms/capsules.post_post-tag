@@ -1,7 +1,7 @@
 import type { IPostTag, IUnpackedPostTag } from "@/domain/types";
 import type { IPostTagReader } from "@/domain/types/post-tag-reader.interface";
-import { UnpackPostTagService } from "@/domain/services";
 import type { FindEntityByTypeUseCase } from "@caffeine/application/use-cases";
+import { Mapper } from "@caffeine/entity";
 
 export class FindPostTagUseCase {
 	public constructor(
@@ -14,6 +14,6 @@ export class FindPostTagUseCase {
 	public async run(id: string): Promise<IUnpackedPostTag> {
 		const targetPostTag = await this.findPostTagByType.run(id, "post@post-tag");
 
-		return UnpackPostTagService.run(targetPostTag);
+		return Mapper.toDTO(targetPostTag);
 	}
 }

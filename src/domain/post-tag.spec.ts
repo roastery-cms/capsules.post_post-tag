@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { PostTag } from "./post-tag";
 import { InvalidPropertyException } from "@caffeine/errors/domain";
-import { makeEntityFactory } from "@caffeine/entity/factories";
+import { makeEntity } from "@caffeine/entity/factories";
 
 describe("PostTag Entity", () => {
 	it("should be able to create a new post tag", () => {
@@ -81,10 +81,10 @@ describe("PostTag Entity", () => {
 			hidden: false,
 		});
 
-		postTag.toggleVisibility();
+		postTag.changeVisibility(true);
 		expect(postTag.hidden).toBe(true);
 
-		postTag.toggleVisibility();
+		postTag.changeVisibility(false);
 		expect(postTag.hidden).toBe(false);
 	});
 
@@ -127,7 +127,7 @@ describe("PostTag Entity", () => {
 
 		const initialUpdatedAt = postTag.updatedAt;
 
-		postTag.toggleVisibility();
+		postTag.changeVisibility(true);
 
 		expect(postTag.updatedAt).not.toBe(initialUpdatedAt);
 		expect(typeof postTag.updatedAt).toBe("string");
@@ -135,7 +135,7 @@ describe("PostTag Entity", () => {
 
 	it("should create a post tag with custom entity props (rehydration)", () => {
 		const entityProps = {
-			...makeEntityFactory(),
+			...makeEntity(),
 			updatedAt: new Date().toISOString(),
 		};
 

@@ -299,7 +299,7 @@ describe("PostTagRepository (Test)", () => {
 			// Update the tag
 			postTag.rename("Updated Name");
 			postTag.reslug("updated-slug");
-			postTag.toggleVisibility();
+			postTag.changeVisibility(true);
 
 			await repository.update(postTag);
 
