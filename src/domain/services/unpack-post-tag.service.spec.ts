@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { UnpackPostTag } from "./unpack-post-tag.service";
+import { UnpackPostTagService } from "./unpack-post-tag.service";
 import { PostTag } from "../post-tag";
 
 describe("UnpackPostTag Service", () => {
@@ -10,7 +10,7 @@ describe("UnpackPostTag Service", () => {
 			hidden: false,
 		});
 
-		const unpacked = UnpackPostTag.run(postTag);
+		const unpacked = UnpackPostTagService.run(postTag);
 
 		expect(unpacked).toEqual({
 			id: postTag.id,

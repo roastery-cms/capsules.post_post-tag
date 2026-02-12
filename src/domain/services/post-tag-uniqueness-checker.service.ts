@@ -1,9 +1,9 @@
-import type { IPostTagRepository } from "../types/post-tag.repository.interface";
+import type { IPostTagReader } from "../types/post-tag-reader.interface";
 
-export class PostTagUniquenessChecker {
-	public constructor(private readonly repository: IPostTagRepository) {}
+export class PostTagUniquenessCheckerService {
+	public constructor(private readonly reader: IPostTagReader) {}
 
 	public async run(slug: string): Promise<boolean> {
-		return !(await this.repository.findBySlug(slug));
+		return !(await this.reader.findBySlug(slug));
 	}
 }

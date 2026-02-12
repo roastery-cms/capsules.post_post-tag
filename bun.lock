@@ -6,8 +6,10 @@
       "name": "@caffeine-packages/post.post-tag",
       "dependencies": {
         "@caffeine-packages/post.db.prisma-drive": "link:@caffeine-packages/post.db.prisma-drive",
+        "@caffeine/application": "link:@caffeine/application",
         "@caffeine/auth": "link:@caffeine/auth",
         "@caffeine/constants": "link:@caffeine/constants",
+        "@caffeine/domain": "link:@caffeine/domain",
         "@caffeine/entity": "link:@caffeine/entity",
         "@caffeine/errors": "link:@caffeine/errors",
         "@caffeine/models": "link:@caffeine/models",
@@ -48,9 +50,13 @@
 
     "@caffeine-packages/post.db.prisma-drive": ["@caffeine-packages/post.db.prisma-drive@link:@caffeine-packages/post.db.prisma-drive", {}],
 
+    "@caffeine/application": ["@caffeine/application@link:@caffeine/application", {}],
+
     "@caffeine/auth": ["@caffeine/auth@link:@caffeine/auth", {}],
 
     "@caffeine/constants": ["@caffeine/constants@link:@caffeine/constants", {}],
+
+    "@caffeine/domain": ["@caffeine/domain@link:@caffeine/domain", {}],
 
     "@caffeine/entity": ["@caffeine/entity@link:@caffeine/entity", {}],
 

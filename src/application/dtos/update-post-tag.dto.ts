@@ -1,4 +1,5 @@
 import { t } from "@caffeine/models";
+import { SlugDTO } from "@caffeine/models/dtos/primitives";
 
 export const UpdatePostTagDTO = t.Object(
 	{
@@ -9,6 +10,7 @@ export const UpdatePostTagDTO = t.Object(
 				minLength: 1,
 			}),
 		),
+		slug: t.Optional(SlugDTO),
 		hidden: t.Optional(
 			t.Boolean({
 				description:

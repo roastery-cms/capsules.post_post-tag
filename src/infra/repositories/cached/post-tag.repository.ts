@@ -3,7 +3,7 @@ import type { IPostTagRepository } from "@/domain/types/post-tag.repository.inte
 import { redis } from "@caffeine/redis-drive";
 import { CachedPostTagMapper } from "./cached-post-tag.mapper";
 import { CACHE_EXPIRATION_TIME } from "@caffeine/constants";
-import { UnpackPostTag } from "@/domain/services/unpack-post-tag.service";
+import { UnpackPostTagService } from "@/domain/services/unpack-post-tag.service";
 
 export class PostTagRepository implements IPostTagRepository {
 	private cacheExpirationTime: number = CACHE_EXPIRATION_TIME.SAFE;
@@ -145,7 +145,7 @@ export class PostTagRepository implements IPostTagRepository {
 	}
 
 	private async cachePostTag(postTag: IPostTag): Promise<void> {
-		const unpacked = UnpackPostTag.run(postTag);
+		const unpacked = UnpackPostTagService.run(postTag);
 
 		await redis.set(
 			`post@post-tag::$${postTag.id}`,

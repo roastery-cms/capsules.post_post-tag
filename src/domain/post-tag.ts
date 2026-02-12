@@ -1,48 +1,56 @@
 import type { IMakePostTag, IPostTag } from "./types";
-import Entity from "@caffeine/entity";
+import { Entity } from "@caffeine/entity";
 import { DefinedStringVO, SlugVO } from "@caffeine/value-objects";
 import type { EntityDTO } from "@caffeine/entity/dtos";
 import { makeEntityFactory } from "@caffeine/entity/factories";
 import { AutoUpdate } from "@caffeine/entity/decorators";
+import type { IValueObjectMetadata } from "@caffeine/value-objects/types";
+import { UnpackedPostTagDTO } from "./dtos";
+import { Schema } from "@caffeine/schema";
+// TODO: Atualizar os testes unitários
 
-export class PostTag extends Entity implements IPostTag {
+export class PostTag
+	extends Entity<typeof UnpackedPostTagDTO>
+	implements IPostTag
+{
+	public override readonly __schema: Schema<typeof UnpackedPostTagDTO> =
+		Schema.make(UnpackedPostTagDTO);
+	public override readonly __source: string = "post@post-tag";
+
 	private _name: DefinedStringVO;
 	private _slug: SlugVO;
 	private _hidden: boolean;
 
-	public get name() {
+	public get name(): string {
 		return this._name.value;
 	}
 
-	public get slug() {
+	public get slug(): string {
 		return this._slug.value;
 	}
 
-	public get hidden() {
+	public get hidden(): boolean {
 		return this._hidden;
 	}
 
-	private constructor(initialProperties: IMakePostTag, entityProps: EntityDTO) {
+	private constructor(
+		{ name, hidden, slug }: IMakePostTag,
+		entityProps: EntityDTO,
+	) {
 		super(entityProps);
 
-		this._name = DefinedStringVO.make(initialProperties.name, {
-			name: "name",
-			layer: "post@post-tag",
-		});
+		this._name = DefinedStringVO.make(name, this.getPropertyContext("name"));
 
-		this._hidden = initialProperties.hidden ?? false;
+		this._hidden = hidden === true;
 
-		this._slug = SlugVO.make(initialProperties.slug ?? initialProperties.name, {
-			name: "slug",
-			layer: "post@post-tag",
-		});
+		this._slug = SlugVO.make(slug ?? name, this.getPropertyContext("slug"));
 	}
 
 	public static make(
 		initialProperties: IMakePostTag,
-		initialEntityProps?: EntityDTO,
+		_entityProps?: EntityDTO,
 	): PostTag {
-		const entityProps = initialEntityProps ?? makeEntityFactory();
+		const entityProps = _entityProps ?? makeEntityFactory();
 
 		Entity.prepare(entityProps);
 
@@ -51,22 +59,25 @@ export class PostTag extends Entity implements IPostTag {
 
 	@AutoUpdate
 	public rename(value: string): void {
-		this._name = DefinedStringVO.make(value, {
-			name: "name",
-			layer: "post@post-tag",
-		});
+		this._name = DefinedStringVO.make(value, this.getPropertyContext("name"));
 	}
 
 	@AutoUpdate
 	public reslug(value: string): void {
-		this._slug = SlugVO.make(value, {
-			name: "slug",
-			layer: "post@post-tag",
-		});
+		this._slug = SlugVO.make(value, this.getPropertyContext("slug"));
 	}
 
 	@AutoUpdate
-	public toggleVisibility(): void {
-		this._hidden = !this._hidden;
+	public changeVisibility(value: boolean): void {
+		this._hidden = value;
+	}
+
+	protected override getPropertyContext(
+		propertyName: string,
+	): IValueObjectMetadata {
+		return {
+			name: propertyName,
+			source: this.__source,
+		};
 	}
 }

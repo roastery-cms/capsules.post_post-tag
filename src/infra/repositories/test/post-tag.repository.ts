@@ -6,8 +6,9 @@ import { MAX_ITEMS_PER_QUERY } from "@caffeine/constants";
 
 export class PostTagRepository implements IPostTagRepository {
 	findManyByIds(ids: string[]): Promise<Array<IPostTag | null>> {
-		throw new Error("Method not implemented.");
+		return Promise.all(ids.map((id) => this.findById(id)));
 	}
+
 	private postTags: IUnpackedPostTag[] = [];
 
 	async create(data: PostTag): Promise<void> {
@@ -15,9 +16,7 @@ export class PostTagRepository implements IPostTagRepository {
 			id: data.id,
 			createdAt: data.createdAt,
 			updatedAt: data.updatedAt,
-			name: data.name,
-			slug: data.slug,
-			hidden: data.hidden,
+			...this.unpack(data),
 		});
 	}
 
@@ -26,9 +25,7 @@ export class PostTagRepository implements IPostTagRepository {
 
 		if (!targetPostTag) return null;
 
-		const { id: tagId, createdAt, updatedAt, ...props } = targetPostTag;
-
-		return PostTag.make(props, { id: tagId, createdAt, updatedAt });
+		return this.toDomain(targetPostTag);
 	}
 
 	async findBySlug(slug: string): Promise<IPostTag | null> {
@@ -36,19 +33,16 @@ export class PostTagRepository implements IPostTagRepository {
 
 		if (!targetPostTag) return null;
 
-		const { id: tagId, createdAt, updatedAt, ...props } = targetPostTag;
-
-		return PostTag.make(props, { id: tagId, createdAt, updatedAt });
+		return this.toDomain(targetPostTag);
 	}
 
 	async findMany(page: number): Promise<IPostTag[]> {
 		const skip = MAX_ITEMS_PER_QUERY * page;
 		const take = MAX_ITEMS_PER_QUERY;
 
-		return this.postTags.slice(skip, skip + take).map((tag) => {
-			const { id: tagId, createdAt, updatedAt, ...props } = tag;
-			return PostTag.make(props, { id: tagId, createdAt, updatedAt });
-		});
+		return this.postTags
+			.slice(skip, skip + take)
+			.map((tag) => this.toDomain(tag));
 	}
 
 	async update(data: PostTag): Promise<void> {
@@ -60,9 +54,22 @@ export class PostTagRepository implements IPostTagRepository {
 			id: data.id,
 			createdAt: data.createdAt,
 			updatedAt: data.updatedAt,
-			name: data.name,
-			slug: data.slug,
-			hidden: data.hidden,
+			...this.unpack(data),
+		};
+	}
+
+	private toDomain(tag: IUnpackedPostTag): PostTag {
+		const { id: tagId, createdAt, updatedAt, ...props } = tag;
+		return PostTag.make(props, { id: tagId, createdAt, updatedAt });
+	}
+
+	private unpack(
+		tag: IPostTag,
+	): Omit<IUnpackedPostTag, "id" | "createdAt" | "updatedAt"> {
+		return {
+			name: tag.name,
+			slug: tag.slug,
+			hidden: tag.hidden,
 		};
 	}
 

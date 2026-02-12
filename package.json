@@ -59,6 +59,8 @@
     "@caffeine/models": "link:@caffeine/models",
     "@caffeine/schema": "link:@caffeine/schema",
     "@caffeine/value-objects": "link:@caffeine/value-objects",
+    "@caffeine/application": "link:@caffeine/application",
+    "@caffeine/domain": "link:@caffeine/domain",
     "@caffeine/entity": "link:@caffeine/entity",
     "@caffeine-packages/post.db.prisma-drive": "link:@caffeine-packages/post.db.prisma-drive",
     "@caffeine/redis-drive": "link:@caffeine/redis-drive",

@@ -1,6 +1,6 @@
 import { PostTag } from "@/domain";
 import type { IPostTag, IUnpackedPostTag } from "@/domain/types";
-import { InvalidDomainDataException } from "@caffeine/errors/domain";
+import { InvalidPropertyException } from "@caffeine/errors/domain";
 import { UnexpectedCacheValueException } from "@caffeine/errors/infra";
 
 export const CachedPostTagMapper = {
@@ -11,10 +11,10 @@ export const CachedPostTagMapper = {
 		try {
 			return PostTag.make(properties, { id, createdAt, updatedAt });
 		} catch (err: unknown) {
-			if (err instanceof InvalidDomainDataException)
+			if (err instanceof InvalidPropertyException)
 				throw new UnexpectedCacheValueException(
 					key,
-					err.layerName,
+					`${err.source}::${err.property}`,
 					err.message,
 				);
 

@@ -52,10 +52,45 @@ describe("PostTagRepository (Test)", () => {
 	});
 
 	describe("findManyByIds", () => {
-		it("should throw error as method is not implemented", () => {
-			expect(() => repository.findManyByIds(["any-id"])).toThrow(
-				"Method not implemented.",
-			);
+		it("should return post tags matching the given ids", async () => {
+			const tag1 = PostTag.make({
+				name: "Tag 1",
+				slug: "tag-1",
+				hidden: false,
+			});
+			const tag2 = PostTag.make({
+				name: "Tag 2",
+				slug: "tag-2",
+				hidden: false,
+			});
+
+			await repository.create(tag1);
+			await repository.create(tag2);
+
+			const results = await repository.findManyByIds([tag1.id, tag2.id]);
+
+			expect(results).toHaveLength(2);
+			expect(results[0]?.id).toBe(tag1.id);
+			expect(results[1]?.id).toBe(tag2.id);
+		});
+
+		it("should return null for non-existent ids", async () => {
+			const tag = PostTag.make({
+				name: "Tag 1",
+				slug: "tag-1",
+				hidden: false,
+			});
+
+			await repository.create(tag);
+
+			const results = await repository.findManyByIds([
+				tag.id,
+				"non-existent-id",
+			]);
+
+			expect(results).toHaveLength(2);
+			expect(results[0]?.id).toBe(tag.id);
+			expect(results[1]).toBeNull();
 		});
 	});
 
@@ -263,15 +298,16 @@ describe("PostTagRepository (Test)", () => {
 
 			// Update the tag
 			postTag.rename("Updated Name");
+			postTag.reslug("updated-slug");
 			postTag.toggleVisibility();
 
 			await repository.update(postTag);
 
-			const found = await repository.findBySlug("updated-name");
+			const found = await repository.findById(postTag.id);
 
 			expect(found).not.toBeNull();
 			expect(found?.name).toBe("Updated Name");
-			expect(found?.slug).toBe("updated-name");
+			expect(found?.slug).toBe("updated-slug");
 			expect(found?.hidden).toBe(true);
 		});
 
@@ -293,8 +329,7 @@ describe("PostTagRepository (Test)", () => {
 			tag1.rename("Updated Tag 1");
 			await repository.update(tag1);
 
-			// Note: slug changes when name changes
-			const found1 = await repository.findBySlug("updated-tag-1");
+			const found1 = await repository.findById(tag1.id);
 			const found2 = await repository.findBySlug("tag-2");
 
 			expect(found1?.name).toBe("Updated Tag 1");

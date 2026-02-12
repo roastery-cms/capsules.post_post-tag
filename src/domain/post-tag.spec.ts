@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { PostTag } from "./post-tag";
 import { InvalidPropertyException } from "@caffeine/errors/domain";
+import { makeEntityFactory } from "@caffeine/entity/factories";
 
 describe("PostTag Entity", () => {
 	it("should be able to create a new post tag", () => {
@@ -28,6 +29,15 @@ describe("PostTag Entity", () => {
 		expect(postTag.slug).toBe("auto-slug-tag");
 	});
 
+	it("should default hidden to false when not provided", () => {
+		const postTag = PostTag.make({
+			name: "Tag Without Hidden",
+			slug: "tag-without-hidden",
+		});
+
+		expect(postTag.hidden).toBe(false);
+	});
+
 	it("should throw error if name is empty", () => {
 		expect(() => {
 			PostTag.make({
@@ -38,21 +48,9 @@ describe("PostTag Entity", () => {
 		}).toThrow(InvalidPropertyException);
 	});
 
-	it("should rename the tag and update slug", () => {
+	it("should rename the tag without changing the slug", () => {
 		const postTag = PostTag.make({
-			name: "Old Name",
-			slug: "old-name",
-			hidden: false,
-		});
-
-		postTag.rename("New Name");
-
-		expect(postTag.name).toBe("New Name");
-	});
-
-	it("should rename without updating slug when updateSlug is false", () => {
-		const postTag = PostTag.make({
-			name: "Original",
+			name: "Original Name",
 			slug: "original",
 			hidden: false,
 		});
@@ -103,5 +101,58 @@ describe("PostTag Entity", () => {
 
 		expect(postTag.updatedAt).not.toBe(initialUpdatedAt);
 		expect(typeof postTag.updatedAt).toBe("string");
+	});
+
+	it("should update updatedAt when reslugged", () => {
+		const postTag = PostTag.make({
+			name: "Tag",
+			slug: "tag",
+			hidden: false,
+		});
+
+		const initialUpdatedAt = postTag.updatedAt;
+
+		postTag.reslug("new-slug");
+
+		expect(postTag.updatedAt).not.toBe(initialUpdatedAt);
+		expect(typeof postTag.updatedAt).toBe("string");
+	});
+
+	it("should update updatedAt when visibility is toggled", () => {
+		const postTag = PostTag.make({
+			name: "Tag",
+			slug: "tag",
+			hidden: false,
+		});
+
+		const initialUpdatedAt = postTag.updatedAt;
+
+		postTag.toggleVisibility();
+
+		expect(postTag.updatedAt).not.toBe(initialUpdatedAt);
+		expect(typeof postTag.updatedAt).toBe("string");
+	});
+
+	it("should create a post tag with custom entity props (rehydration)", () => {
+		const entityProps = {
+			...makeEntityFactory(),
+			updatedAt: new Date().toISOString(),
+		};
+
+		const postTag = PostTag.make(
+			{
+				name: "Rehydrated Tag",
+				slug: "rehydrated-tag",
+				hidden: true,
+			},
+			entityProps,
+		);
+
+		expect(postTag.id).toBe(entityProps.id);
+		expect(postTag.createdAt).toBe(entityProps.createdAt);
+		expect(postTag.updatedAt).toBe(entityProps.updatedAt);
+		expect(postTag.name).toBe("Rehydrated Tag");
+		expect(postTag.slug).toBe("rehydrated-tag");
+		expect(postTag.hidden).toBe(true);
 	});
 });

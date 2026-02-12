@@ -17,13 +17,12 @@ This project was created using `bun init` in bun v1.3.7. [Bun](https://bun.com) 
  
 ## PostType
 
-- [x] [x] [POST]* /post-tag
+- [x] [] [POST]* /post-tag
 - Criar um novo post-type
 
-- [x] [x] [GET] /post-tag/:id-or-slug
+- [x] [] [GET] /post-tag/:id-or-slug
 - Consulta um determinado post-type
 
-- [x] [x] [GET] /post-tag?page={{ value: number }}
+- [x] [] [GET] /post-tag?page={{ value: number }}
 
-- [x] [x] [PATCH]* /post-type/:id-or-slug/toggle-visibility
-- [x] [x] [PATCH]* /post-type/:id-or-slug
+- [ ] [ ] [PATCH]* /post-type/:id-or-slug?update-slug={{ value: boolean }}

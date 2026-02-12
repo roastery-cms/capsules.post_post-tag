@@ -1,6 +1,6 @@
 import type { IPostTag, IUnpackedPostTag } from "../types";
 
-export const UnpackPostTag = {
+export const UnpackPostTagService = {
 	run: ({
 		id,
 		createdAt,

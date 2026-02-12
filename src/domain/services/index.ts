@@ -1,2 +1,2 @@
-export { PostTagUniquenessChecker } from "./post-tag-uniqueness-checker.service";
-export { UnpackPostTag } from "./unpack-post-tag.service";
+export { PostTagUniquenessCheckerService } from "./post-tag-uniqueness-checker.service";
+export { UnpackPostTagService } from "./unpack-post-tag.service";
