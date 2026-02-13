@@ -1,24 +1,32 @@
 import { UpdatePostTagDTO } from "@/application/dtos/update-post-tag.dto";
-import { makeUpdatePostTagUseCase } from "@/infra/factories/application";
+import { PostTag } from "@/domain";
+import { makeUpdatePostTagUseCase } from "@/infra/factories/application/use-cases";
 import { AuthGuard } from "@caffeine/auth/plugins/guards";
-import { SlugObjectDTO } from "@caffeine/models/dtos";
+import { EntitySource } from "@caffeine/entity/symbols";
+import { IdOrSlugDTO } from "@caffeine/presentation";
 import { Elysia } from "elysia";
+import { UpdatePostTagQueryParamsDTO } from "../dtos/update-post-tag-query-params.dto";
+import { UnpackedPostTagDTO } from "@/domain/dtos";
+
+const SERVICE_NAME = `${PostTag[EntitySource]}:update-post-tag`;
 
 export const UpdatePostTagController = new Elysia()
-	.use(AuthGuard({ layerName: "post@post-tag" }))
-	.decorate("service", makeUpdatePostTagUseCase())
+	.use(AuthGuard({ layerName: PostTag[EntitySource] }))
+	.decorate(SERVICE_NAME, makeUpdatePostTagUseCase())
 	.patch(
-		"/by-slug/:slug",
-		({ params, body, service }) => {
-			return service.run(params.slug, body);
+		"/:id-or-slug",
+		({ params, body, query, [SERVICE_NAME]: service }) => {
+			return service!.run(params["id-or-slug"], body, query["update-slug"]);
 		},
 		{
-			params: SlugObjectDTO,
+			params: IdOrSlugDTO,
 			body: UpdatePostTagDTO,
+			query: UpdatePostTagQueryParamsDTO,
 			detail: {
 				summary: "Update Post Tag",
 				tags: ["Post Tags"],
 				description: "Updates an existing post tag with the provided details.",
 			},
+			response: UnpackedPostTagDTO,
 		},
 	);

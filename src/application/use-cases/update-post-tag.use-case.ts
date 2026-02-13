@@ -27,7 +27,8 @@ export class UpdatePostTagUseCase {
 	): Promise<IUnpackedPostTag> {
 		const _targetPostTag = await this.findPostTag.run(_id);
 
-		if (!_targetPostTag) throw new ResourceNotFoundException("post@post-tag");
+		if (!_targetPostTag)
+			throw new ResourceNotFoundException(PostTag[EntitySource]);
 
 		const { id, createdAt, updatedAt, ...properties } = _targetPostTag;
 
@@ -37,12 +38,9 @@ export class UpdatePostTagUseCase {
 			updatedAt,
 		});
 
-		if (
-			(updateSlug && content.slug) ||
-			(content.name && updateSlug && content.slug)
-		)
+		if (content.name && updateSlug && content.slug)
 			throw new InvalidOperationException(
-				"post@post-tag",
+				PostTag[EntitySource],
 				"You cannot allow slug updates by name slug when you have a slug set to be changed.",
 			);
 

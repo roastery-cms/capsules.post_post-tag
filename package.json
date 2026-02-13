@@ -36,13 +36,18 @@
     "test:unit": "vitest run",
     "test:ui": "vitest --ui",
     "test:coverage": "vitest run --coverage",
-    "setup": "bun run build && bun link"
+    "setup": "bun run build && bun link",
+    "start:dev": "bun --watch src/presentation/dev",
+    "prepare": "husky"
   },
   "devDependencies": {
+    "@commitlint/cli": "^20.4.1",
+    "@commitlint/config-conventional": "^20.4.1",
     "@faker-js/faker": "^10.2.0",
     "@types/bun": "latest",
     "@vitest/coverage-v8": "^4.0.18",
     "@vitest/ui": "^4.0.18",
+    "husky": "^9.1.7",
     "tsup": "^8.5.1",
     "vite-tsconfig-paths": "^6.0.5",
     "vitest": "^4.0.18"
@@ -60,6 +65,7 @@
     "@caffeine/schema": "link:@caffeine/schema",
     "@caffeine/value-objects": "link:@caffeine/value-objects",
     "@caffeine/application": "link:@caffeine/application",
+    "@caffeine/presentation": "link:@caffeine/presentation",
     "@caffeine/domain": "link:@caffeine/domain",
     "@caffeine/entity": "link:@caffeine/entity",
     "@caffeine-packages/post.db.prisma-drive": "link:@caffeine-packages/post.db.prisma-drive",

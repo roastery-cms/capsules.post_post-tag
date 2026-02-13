@@ -1,6 +1,6 @@
 import type { IMakePostTag, IPostTag } from "./types";
 import { Entity } from "@caffeine/entity";
-import { DefinedStringVO, SlugVO } from "@caffeine/value-objects";
+import { BooleanVO, DefinedStringVO, SlugVO } from "@caffeine/value-objects";
 import type { EntityDTO } from "@caffeine/entity/dtos";
 import {
 	EntityContext,
@@ -9,18 +9,18 @@ import {
 } from "@caffeine/entity/symbols";
 import { makeEntity } from "@caffeine/entity/factories";
 import { AutoUpdate } from "@caffeine/entity/decorators";
-import type { IValueObjectMetadata } from "@caffeine/value-objects/types";
 import type { Schema } from "@caffeine/schema";
 import { UnpackedPostTagSchema } from "./schemas";
 
 export class PostTag extends Entity<UnpackedPostTagSchema> implements IPostTag {
 	public override readonly [EntitySource]: string = "post@post-tag";
+	public static readonly [EntitySource]: string = "post@post-tag";
 	public override readonly [EntitySchema]: Schema<UnpackedPostTagSchema> =
 		UnpackedPostTagSchema;
 
 	private _name: DefinedStringVO;
 	private _slug: SlugVO;
-	private _hidden: boolean;
+	private _hidden: BooleanVO;
 
 	public get name(): string {
 		return this._name.value;
@@ -31,7 +31,7 @@ export class PostTag extends Entity<UnpackedPostTagSchema> implements IPostTag {
 	}
 
 	public get hidden(): boolean {
-		return this._hidden;
+		return this._hidden.value;
 	}
 
 	private constructor(
@@ -42,7 +42,10 @@ export class PostTag extends Entity<UnpackedPostTagSchema> implements IPostTag {
 
 		this._name = DefinedStringVO.make(name, this[EntityContext]("name"));
 
-		this._hidden = hidden === true;
+		this._hidden = BooleanVO.make(
+			hidden === true,
+			this[EntityContext]("hidden"),
+		);
 
 		this._slug = SlugVO.make(slug ?? name, this[EntityContext]("slug"));
 	}
@@ -52,8 +55,6 @@ export class PostTag extends Entity<UnpackedPostTagSchema> implements IPostTag {
 		_entityProps?: EntityDTO,
 	): IPostTag {
 		const entityProps = _entityProps ?? makeEntity();
-
-		Entity.prepare(entityProps);
 
 		return new PostTag(initialProperties, entityProps);
 	}
@@ -70,13 +71,6 @@ export class PostTag extends Entity<UnpackedPostTagSchema> implements IPostTag {
 
 	@AutoUpdate
 	public changeVisibility(value: boolean): void {
-		this._hidden = value;
-	}
-
-	public override [EntityContext](name: string): IValueObjectMetadata {
-		return {
-			name,
-			source: this[EntitySource],
-		};
+		this._hidden = BooleanVO.make(value, this[EntityContext]("hidden"));
 	}
 }
