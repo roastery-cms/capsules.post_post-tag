@@ -1,5 +1,4 @@
 import { t } from "@caffeine/models";
-import { SlugDTO } from "@caffeine/models/dtos/primitives";
 
 export const UpdatePostTagDTO = t.Object(
 	{
@@ -10,7 +9,13 @@ export const UpdatePostTagDTO = t.Object(
 				minLength: 1,
 			}),
 		),
-		slug: t.Optional(SlugDTO),
+		slug: t.Optional(
+			t.String({
+				description: "The unique slug identifier of the post tag.",
+				examples: ["my-cool-tag"],
+				minLength: 1,
+			}),
+		),
 		hidden: t.Optional(
 			t.Boolean({
 				description:

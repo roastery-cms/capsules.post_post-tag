@@ -17,12 +17,14 @@ export const FindManyPostTagsController = new Elysia()
 	.decorate(COUNT_POST_TAGS, makeCountPostTagsUseCase())
 	.get(
 		"/",
-		async ({
-			query,
-			[FIND_MANY_POST_TAGS]: findManyPostTags,
-			[COUNT_POST_TAGS]: countPostTags,
-			set,
-		}) => {
+		async (ctx) => {
+			const {
+				query,
+				[FIND_MANY_POST_TAGS]: findManyPostTags,
+				[COUNT_POST_TAGS]: countPostTags,
+				set,
+			} = ctx;
+
 			const { count, totalPages } = await countPostTags!.run();
 
 			set.headers["X-Total-Count"] = String(count);

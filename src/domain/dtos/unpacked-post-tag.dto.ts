@@ -1,6 +1,5 @@
 import { EntityDTO } from "@caffeine/entity/dtos";
 import { t } from "@caffeine/models";
-import { SlugDTO } from "@caffeine/models/dtos/primitives";
 
 export const UnpackedPostTagDTO = t.Composite(
 	[
@@ -11,7 +10,11 @@ export const UnpackedPostTagDTO = t.Composite(
 					examples: ["Review"],
 					minLength: 1,
 				}),
-				slug: SlugDTO,
+				slug: t.String({
+					description: "The unique slug identifier of the post tag.",
+					examples: ["my-cool-tag"],
+					minLength: 1,
+				}),
 				hidden: t.Boolean({
 					description:
 						"Indicates whether the post tag is hidden in the user interface.",

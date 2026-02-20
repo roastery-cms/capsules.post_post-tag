@@ -5,11 +5,12 @@ import { prisma } from "@caffeine-packages/post.db.prisma-drive";
 import { SafePrisma } from "@caffeine-packages/post.db.prisma-drive/decorators";
 import { MAX_ITEMS_PER_QUERY } from "@caffeine/constants";
 import { PrismaPostTagMapper } from "./prisma-post-tag-mapper";
+import { Mapper } from "@caffeine/entity";
 
 export class PostTagRepository implements IPostTagRepository {
 	@SafePrisma("post@post-tag")
-	async create(data: PostTag): Promise<void> {
-		await prisma.postTag.create({ data });
+	async create(_data: IPostTag): Promise<void> {
+		await prisma.postTag.create({ data: Mapper.toDTO(_data) });
 	}
 
 	@SafePrisma("post@post-tag")
@@ -36,8 +37,9 @@ export class PostTagRepository implements IPostTagRepository {
 	async findMany(page: number): Promise<IPostTag[]> {
 		return (
 			await prisma.postTag.findMany({
-				skip: MAX_ITEMS_PER_QUERY * page,
+				skip: MAX_ITEMS_PER_QUERY * (page - 1),
 				take: MAX_ITEMS_PER_QUERY,
+				orderBy: [{ createdAt: "asc" }],
 			})
 		).map((item) => PrismaPostTagMapper.run(item));
 	}
@@ -59,7 +61,7 @@ export class PostTagRepository implements IPostTagRepository {
 
 	@SafePrisma("post@post-tag")
 	async update(data: IPostTag): Promise<void> {
-		const { id, ...otherData } = data;
+		const { id, ...otherData } = Mapper.toDTO(data);
 
 		await prisma.postTag.update({ where: { id }, data: { ...otherData } });
 	}

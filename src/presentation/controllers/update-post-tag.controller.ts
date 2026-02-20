@@ -1,7 +1,7 @@
 import { UpdatePostTagDTO } from "@/application/dtos/update-post-tag.dto";
 import { PostTag } from "@/domain";
 import { makeUpdatePostTagUseCase } from "@/infra/factories/application/use-cases";
-import { AuthGuard } from "@caffeine/auth/plugins/guards";
+import { CaffeineAuth } from "@caffeine/auth/plugins/guards";
 import { EntitySource } from "@caffeine/entity/symbols";
 import { IdOrSlugDTO } from "@caffeine/presentation";
 import { Elysia } from "elysia";
@@ -11,13 +11,16 @@ import { UnpackedPostTagDTO } from "@/domain/dtos";
 const SERVICE_NAME = `${PostTag[EntitySource]}:update-post-tag`;
 
 export const UpdatePostTagController = new Elysia()
-	.use(AuthGuard({ layerName: PostTag[EntitySource] }))
+	.use(
+		CaffeineAuth({
+			layerName: PostTag[EntitySource],
+		}),
+	)
 	.decorate(SERVICE_NAME, makeUpdatePostTagUseCase())
 	.patch(
 		"/:id-or-slug",
-		({ params, body, query, [SERVICE_NAME]: service }) => {
-			return service!.run(params["id-or-slug"], body, query["update-slug"]);
-		},
+		({ params, body, query, [SERVICE_NAME]: service }) =>
+			service!.run(params["id-or-slug"], body, query["update-slug"]),
 		{
 			params: IdOrSlugDTO,
 			body: UpdatePostTagDTO,

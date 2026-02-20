@@ -70,7 +70,7 @@ export class UpdatePostTagUseCase {
 
 		const hasPostTagWithSameSlug = await this.uniquenessChecker.run(value);
 
-		if (hasPostTagWithSameSlug)
+		if (!hasPostTagWithSameSlug)
 			throw new ResourceAlreadyExistsException(postTag[EntitySource]);
 	}
 }

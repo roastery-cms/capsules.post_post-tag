@@ -58,18 +58,19 @@
     "@caffeine/constants": "link:@caffeine/constants"
   },
   "dependencies": {
+    "@bogeychan/elysia-logger": "^0.1.10",
+    "@caffeine-packages/post.db.prisma-drive": "link:@caffeine-packages/post.db.prisma-drive",
+    "@caffeine/application": "link:@caffeine/application",
     "@caffeine/auth": "link:@caffeine/auth",
     "@caffeine/constants": "link:@caffeine/constants",
-    "@caffeine/errors": "link:@caffeine/errors",
-    "@caffeine/models": "link:@caffeine/models",
-    "@caffeine/schema": "link:@caffeine/schema",
-    "@caffeine/value-objects": "link:@caffeine/value-objects",
-    "@caffeine/application": "link:@caffeine/application",
-    "@caffeine/presentation": "link:@caffeine/presentation",
     "@caffeine/domain": "link:@caffeine/domain",
     "@caffeine/entity": "link:@caffeine/entity",
-    "@caffeine-packages/post.db.prisma-drive": "link:@caffeine-packages/post.db.prisma-drive",
+    "@caffeine/errors": "link:@caffeine/errors",
+    "@caffeine/models": "link:@caffeine/models",
+    "@caffeine/presentation": "link:@caffeine/presentation",
     "@caffeine/redis-drive": "link:@caffeine/redis-drive",
+    "@caffeine/schema": "link:@caffeine/schema",
+    "@caffeine/value-objects": "link:@caffeine/value-objects",
     "@elysiajs/openapi": "^1.4.14",
     "elysia": "^1.4.22"
   }
