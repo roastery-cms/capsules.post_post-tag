@@ -7,6 +7,7 @@
       "dependencies": {
         "@bogeychan/elysia-logger": "^0.1.10",
         "@caffeine-packages/post.db.prisma-drive": "link:@caffeine-packages/post.db.prisma-drive",
+        "@caffeine/api-error-handler": "link:@caffeine/api-error-handler",
         "@caffeine/application": "link:@caffeine/application",
         "@caffeine/auth": "link:@caffeine/auth",
         "@caffeine/constants": "link:@caffeine/constants",
@@ -58,6 +59,8 @@
     "@borewit/text-codec": ["@borewit/text-codec@0.2.1", "", {}, "sha512-k7vvKPbf7J2fZ5klGRD9AeKfUvojuZIQ3BT5u7Jfv+puwXkUBUT5PVyMDfJZpy30CBDXGMgw7fguK/lpOMBvgw=="],
 
     "@caffeine-packages/post.db.prisma-drive": ["@caffeine-packages/post.db.prisma-drive@link:@caffeine-packages/post.db.prisma-drive", {}],
+
+    "@caffeine/api-error-handler": ["@caffeine/api-error-handler@link:@caffeine/api-error-handler", {}],
 
     "@caffeine/application": ["@caffeine/application@link:@caffeine/application", {}],
 

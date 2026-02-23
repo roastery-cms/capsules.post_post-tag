@@ -61,6 +61,7 @@
     "@bogeychan/elysia-logger": "^0.1.10",
     "@caffeine-packages/post.db.prisma-drive": "link:@caffeine-packages/post.db.prisma-drive",
     "@caffeine/application": "link:@caffeine/application",
+    "@caffeine/api-error-handler": "link:@caffeine/api-error-handler",
     "@caffeine/auth": "link:@caffeine/auth",
     "@caffeine/constants": "link:@caffeine/constants",
     "@caffeine/domain": "link:@caffeine/domain",
