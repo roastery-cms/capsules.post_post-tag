@@ -62,6 +62,8 @@
     "@caffeine-packages/post.db.prisma-drive": "link:@caffeine-packages/post.db.prisma-drive",
     "@caffeine/application": "link:@caffeine/application",
     "@caffeine/api-error-handler": "link:@caffeine/api-error-handler",
+    "@caffeine/api-response-mapper": "link:@caffeine/api-response-mapper",
+    "@caffeine/api-docs": "link:@caffeine/api-docs",
     "@caffeine/auth": "link:@caffeine/auth",
     "@caffeine/constants": "link:@caffeine/constants",
     "@caffeine/domain": "link:@caffeine/domain",
@@ -72,7 +74,6 @@
     "@caffeine/redis-drive": "link:@caffeine/redis-drive",
     "@caffeine/schema": "link:@caffeine/schema",
     "@caffeine/value-objects": "link:@caffeine/value-objects",
-    "@elysiajs/openapi": "^1.4.14",
     "elysia": "^1.4.22"
   }
 }

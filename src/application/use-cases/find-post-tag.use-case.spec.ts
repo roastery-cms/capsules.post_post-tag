@@ -4,7 +4,6 @@ import { PostTag } from "@/domain/post-tag";
 import { makeEntity } from "@caffeine/entity/factories";
 import { generateUUID } from "@caffeine/entity/helpers";
 import type { FindEntityByTypeUseCase } from "@caffeine/application/use-cases";
-import { ResourceNotFoundException } from "@caffeine/errors/application";
 
 describe("FindPostTagUseCase", () => {
 	let useCase: FindPostTagUseCase;

@@ -2,13 +2,12 @@ import type { IPostTagWriter } from "@/domain/types/post-tag-writer.interface";
 import type { UpdatePostTagDTO } from "../dtos/update-post-tag.dto";
 import type { FindPostTagUseCase } from "./find-post-tag.use-case";
 import { ResourceNotFoundException } from "@caffeine/errors/application";
-import type { IPostTag, IUnpackedPostTag } from "@/domain/types";
+import type { IPostTag } from "@/domain/types";
 import { PostTag } from "@/domain";
 import {
 	InvalidOperationException,
 	ResourceAlreadyExistsException,
 } from "@caffeine/errors/application";
-import { Mapper } from "@caffeine/entity";
 import { slugify } from "@caffeine/entity/helpers";
 import { EntitySource } from "@caffeine/entity/symbols";
 import type { IPostTagUniquenessCheckerService } from "@/domain/types/services";
@@ -24,19 +23,11 @@ export class UpdatePostTagUseCase {
 		_id: string,
 		content: UpdatePostTagDTO,
 		updateSlug: boolean = false,
-	): Promise<IUnpackedPostTag> {
-		const _targetPostTag = await this.findPostTag.run(_id);
+	) {
+		const targetPostTag = await this.findPostTag.run(_id);
 
-		if (!_targetPostTag)
+		if (!targetPostTag)
 			throw new ResourceNotFoundException(PostTag[EntitySource]);
-
-		const { id, createdAt, updatedAt, ...properties } = _targetPostTag;
-
-		const targetPostTag = PostTag.make(properties, {
-			id,
-			createdAt,
-			updatedAt,
-		});
 
 		if (content.name && updateSlug && content.slug)
 			throw new InvalidOperationException(
@@ -61,7 +52,7 @@ export class UpdatePostTagUseCase {
 
 		await this.writer.update(targetPostTag);
 
-		return Mapper.toDTO(targetPostTag);
+		return targetPostTag;
 	}
 
 	private async validateSlugUniqueness(postTag: IPostTag, value: string) {
