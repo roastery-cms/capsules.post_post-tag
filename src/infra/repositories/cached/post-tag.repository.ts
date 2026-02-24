@@ -4,6 +4,8 @@ import { redis } from "@caffeine/redis-drive";
 import { CachedPostTagMapper } from "./cached-post-tag.mapper";
 import { CACHE_EXPIRATION_TIME } from "@caffeine/constants";
 import { Mapper } from "@caffeine/entity";
+import { PostTag } from "@/domain";
+import { EntitySource } from "@caffeine/entity/symbols";
 
 export class PostTagRepository implements IPostTagRepository {
 	private cacheExpirationTime: number = CACHE_EXPIRATION_TIME.SAFE;
@@ -16,12 +18,15 @@ export class PostTagRepository implements IPostTagRepository {
 	}
 
 	async findById(id: string): Promise<IPostTag | null> {
-		const storedPostTag = await redis.get(`post@post-tag::$${id}`);
+		const storedPostTag = await redis.get(`${PostTag[EntitySource]}::$${id}`);
 
 		if (storedPostTag)
 			return storedPostTag === null
 				? null
-				: CachedPostTagMapper.run(`post@post-tag::$${id}`, storedPostTag);
+				: CachedPostTagMapper.run(
+						`${PostTag[EntitySource]}::$${id}`,
+						storedPostTag,
+					);
 
 		const targetPostTag = await this.repository.findById(id);
 
@@ -33,7 +38,7 @@ export class PostTagRepository implements IPostTagRepository {
 	}
 
 	async findBySlug(slug: string): Promise<IPostTag | null> {
-		const storedId = await redis.get(`post@post-tag::${slug}`);
+		const storedId = await redis.get(`${PostTag[EntitySource]}::${slug}`);
 
 		if (storedId) {
 			const postTag = await this.findById(storedId);
@@ -51,7 +56,7 @@ export class PostTagRepository implements IPostTagRepository {
 	}
 
 	async findMany(page: number): Promise<IPostTag[]> {
-		const key = `post@post-tag:page::${page}`;
+		const key = `${PostTag[EntitySource]}:page::${page}`;
 		const storedIds = await redis.get(key);
 
 		if (storedIds) {
@@ -80,7 +85,7 @@ export class PostTagRepository implements IPostTagRepository {
 	async findManyByIds(ids: string[]): Promise<Array<IPostTag | null>> {
 		if (ids.length === 0) return [];
 
-		const keys = ids.map((id) => `post@post-tag::$${id}`);
+		const keys = ids.map((id) => `${PostTag[EntitySource]}::$${id}`);
 		const cachedValues = await redis.mget(...keys);
 
 		const postTagsMap = new Map<string, IPostTag>();
@@ -95,7 +100,7 @@ export class PostTagRepository implements IPostTagRepository {
 			if (cached) {
 				try {
 					const postTag = CachedPostTagMapper.run(
-						`post@post-tag::$${id}`,
+						`${PostTag[EntitySource]}::$${id}`,
 						cached,
 					);
 					postTagsMap.set(id, postTag);
@@ -122,16 +127,18 @@ export class PostTagRepository implements IPostTagRepository {
 	}
 
 	async update(postTag: IPostTag): Promise<void> {
-		const _cachedPostTag = await redis.get(`post@post-tag::$${postTag.id}`);
+		const _cachedPostTag = await redis.get(
+			`${PostTag[EntitySource]}::$${postTag.id}`,
+		);
 
 		if (_cachedPostTag) {
 			const cachedPostTag: IPostTag = CachedPostTagMapper.run(
-				`post@post-tag::$${postTag.id}`,
+				`${PostTag[EntitySource]}::$${postTag.id}`,
 				_cachedPostTag,
 			);
 
-			await redis.del(`post@post-tag::$${cachedPostTag.id}`);
-			await redis.del(`post@post-tag::${cachedPostTag.slug}`);
+			await redis.del(`${PostTag[EntitySource]}::$${cachedPostTag.id}`);
+			await redis.del(`${PostTag[EntitySource]}::${cachedPostTag.slug}`);
 		}
 
 		await this.repository.update(postTag);
@@ -148,13 +155,13 @@ export class PostTagRepository implements IPostTagRepository {
 		const unpacked = Mapper.toDTO(postTag);
 
 		await redis.set(
-			`post@post-tag::$${postTag.id}`,
+			`${PostTag[EntitySource]}::$${postTag.id}`,
 			JSON.stringify(unpacked),
 			"EX",
 			this.cacheExpirationTime,
 		);
 		await redis.set(
-			`post@post-tag::${postTag.slug}`,
+			`${PostTag[EntitySource]}::${postTag.slug}`,
 			postTag.id,
 			"EX",
 			this.cacheExpirationTime,
@@ -162,7 +169,7 @@ export class PostTagRepository implements IPostTagRepository {
 	}
 
 	private async invalidateListCache(): Promise<void> {
-		const patterns = ["post@post-tag:page:*"];
+		const patterns = [`${PostTag[EntitySource]}:page:*`];
 
 		for (const pattern of patterns) {
 			let cursor = "0";

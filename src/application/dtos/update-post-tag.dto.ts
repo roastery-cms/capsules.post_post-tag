@@ -26,6 +26,7 @@ export const UpdatePostTagDTO = t.Object(
 	{
 		description:
 			"Data transfer object used for updating an existing post tag. All properties are optional, allowing partial updates.",
+		minProperties: 1,
 	},
 );
 
