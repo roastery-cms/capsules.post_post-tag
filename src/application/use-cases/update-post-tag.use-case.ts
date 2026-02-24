@@ -55,9 +55,9 @@ export class UpdatePostTagUseCase {
 		value = slugify(value);
 		if (postTag.slug === value) return;
 
-		const hasPostTagWithSameSlug = await this.uniquenessChecker.run(value);
+		const isUnique = await this.uniquenessChecker.run(value);
 
-		if (!hasPostTagWithSameSlug)
+		if (!isUnique)
 			throw new ResourceAlreadyExistsException(postTag[EntitySource]);
 	}
 }
