@@ -1,4 +1,4 @@
-import type { PostTag } from "@/domain/post-tag";
+import { PostTag } from "@/domain/post-tag";
 import type { IPostTag } from "@/domain/types";
 import type { IPostTagRepository } from "@/domain/types/post-tag.repository.interface";
 import { prisma } from "@caffeine-packages/post.db.prisma-drive";
@@ -6,14 +6,15 @@ import { SafePrisma } from "@caffeine-packages/post.db.prisma-drive/decorators";
 import { MAX_ITEMS_PER_QUERY } from "@caffeine/constants";
 import { PrismaPostTagMapper } from "./prisma-post-tag-mapper";
 import { Mapper } from "@caffeine/entity";
+import { EntitySource } from "@caffeine/entity/symbols";
 
 export class PostTagRepository implements IPostTagRepository {
-	@SafePrisma("post@post-tag")
+	@SafePrisma(PostTag[EntitySource])
 	async create(_data: IPostTag): Promise<void> {
 		await prisma.postTag.create({ data: Mapper.toDTO(_data) });
 	}
 
-	@SafePrisma("post@post-tag")
+	@SafePrisma(PostTag[EntitySource])
 	async findById(id: string): Promise<IPostTag | null> {
 		const targetPostTag = await prisma.postTag.findUnique({ where: { id } });
 
@@ -22,7 +23,7 @@ export class PostTagRepository implements IPostTagRepository {
 		return PrismaPostTagMapper.run(targetPostTag);
 	}
 
-	@SafePrisma("post@post-tag")
+	@SafePrisma(PostTag[EntitySource])
 	async findBySlug(slug: string): Promise<IPostTag | null> {
 		const targetPostTag = await prisma.postTag.findUnique({
 			where: { slug },
@@ -33,7 +34,7 @@ export class PostTagRepository implements IPostTagRepository {
 		return PrismaPostTagMapper.run(targetPostTag);
 	}
 
-	@SafePrisma("post@post-tag")
+	@SafePrisma(PostTag[EntitySource])
 	async findMany(page: number): Promise<IPostTag[]> {
 		return (
 			await prisma.postTag.findMany({
@@ -44,7 +45,7 @@ export class PostTagRepository implements IPostTagRepository {
 		).map((item) => PrismaPostTagMapper.run(item));
 	}
 
-	@SafePrisma("post@post-tag")
+	@SafePrisma(PostTag[EntitySource])
 	async findManyByIds(ids: string[]): Promise<Array<IPostTag | null>> {
 		if (ids.length === 0) return [];
 
@@ -59,14 +60,14 @@ export class PostTagRepository implements IPostTagRepository {
 		return ids.map((id) => tagMap.get(id) ?? null);
 	}
 
-	@SafePrisma("post@post-tag")
-	async update(data: IPostTag): Promise<void> {
-		const { id, ...otherData } = Mapper.toDTO(data);
+	@SafePrisma(PostTag[EntitySource])
+	async update(_data: IPostTag): Promise<void> {
+		const { id, ...data } = Mapper.toDTO(_data);
 
-		await prisma.postTag.update({ where: { id }, data: { ...otherData } });
+		await prisma.postTag.update({ where: { id }, data });
 	}
 
-	@SafePrisma("post@post-tag")
+	@SafePrisma(PostTag[EntitySource])
 	count(): Promise<number> {
 		return prisma.postTag.count();
 	}
