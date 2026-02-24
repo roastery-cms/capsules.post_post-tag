@@ -1,7 +1,6 @@
 import type { IPostTagWriter } from "@/domain/types/post-tag-writer.interface";
 import type { UpdatePostTagDTO } from "../dtos/update-post-tag.dto";
 import type { FindPostTagUseCase } from "./find-post-tag.use-case";
-import { ResourceNotFoundException } from "@caffeine/errors/application";
 import type { IPostTag } from "@/domain/types";
 import { PostTag } from "@/domain";
 import {
@@ -25,9 +24,6 @@ export class UpdatePostTagUseCase {
 		updateSlug: boolean = false,
 	) {
 		const targetPostTag = await this.findPostTag.run(_id);
-
-		if (!targetPostTag)
-			throw new ResourceNotFoundException(PostTag[EntitySource]);
 
 		if (content.name && updateSlug && content.slug)
 			throw new InvalidOperationException(
