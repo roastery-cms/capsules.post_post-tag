@@ -7,12 +7,12 @@ import type { FindEntityByTypeUseCase } from "@caffeine/application/use-cases";
 
 describe("FindPostTagUseCase", () => {
 	let useCase: FindPostTagUseCase;
-	let findEntityByType: FindEntityByTypeUseCase<any, any>;
+	let findEntityByType: FindEntityByTypeUseCase<any, any, any>;
 
 	beforeEach(() => {
 		findEntityByType = {
 			run: vi.fn(),
-		} as unknown as FindEntityByTypeUseCase<any, any>;
+		} as unknown as FindEntityByTypeUseCase<any, any, any>;
 		useCase = new FindPostTagUseCase(findEntityByType);
 	});
 
