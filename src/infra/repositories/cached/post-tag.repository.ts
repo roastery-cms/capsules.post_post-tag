@@ -21,12 +21,10 @@ export class PostTagRepository implements IPostTagRepository {
 		const storedPostTag = await redis.get(`${PostTag[EntitySource]}::$${id}`);
 
 		if (storedPostTag)
-			return storedPostTag === null
-				? null
-				: CachedPostTagMapper.run(
-						`${PostTag[EntitySource]}::$${id}`,
-						storedPostTag,
-					);
+			return CachedPostTagMapper.run(
+				`${PostTag[EntitySource]}::$${id}`,
+				storedPostTag,
+			);
 
 		const targetPostTag = await this.repository.findById(id);
 
@@ -44,6 +42,8 @@ export class PostTagRepository implements IPostTagRepository {
 			const postTag = await this.findById(storedId);
 
 			if (postTag && postTag.slug === slug) return postTag;
+
+			await redis.del(`${PostTag[EntitySource]}::${slug}`);
 		}
 
 		const targetPostTag = await this.repository.findBySlug(slug);
@@ -115,12 +115,14 @@ export class PostTagRepository implements IPostTagRepository {
 		if (missedIds.length > 0) {
 			const fetchedPostTags = await this.repository.findManyByIds(missedIds);
 
-			for (const postTag of fetchedPostTags) {
-				if (postTag) {
-					await this.cachePostTag(postTag);
-					postTagsMap.set(postTag.id, postTag);
-				}
-			}
+			await Promise.all(
+				fetchedPostTags
+					.filter((i) => i !== null)
+					.map((pt) => {
+						postTagsMap.set(pt.id, pt);
+						return this.cachePostTag(pt);
+					}),
+			);
 		}
 
 		return ids.map((id) => postTagsMap.get(id) ?? null);
@@ -154,22 +156,24 @@ export class PostTagRepository implements IPostTagRepository {
 	private async cachePostTag(postTag: IPostTag): Promise<void> {
 		const unpacked = Mapper.toDTO(postTag);
 
-		await redis.set(
-			`${PostTag[EntitySource]}::$${postTag.id}`,
-			JSON.stringify(unpacked),
-			"EX",
-			this.cacheExpirationTime,
-		);
-		await redis.set(
-			`${PostTag[EntitySource]}::${postTag.slug}`,
-			postTag.id,
-			"EX",
-			this.cacheExpirationTime,
-		);
+		await Promise.all([
+			redis.set(
+				`${PostTag[EntitySource]}::$${postTag.id}`,
+				JSON.stringify(unpacked),
+				"EX",
+				this.cacheExpirationTime,
+			),
+			redis.set(
+				`${PostTag[EntitySource]}::${postTag.slug}`,
+				postTag.id,
+				"EX",
+				this.cacheExpirationTime,
+			),
+		]);
 	}
 
 	private async invalidateListCache(): Promise<void> {
-		const patterns = [`${PostTag[EntitySource]}:page:*`];
+		const patterns = [`${PostTag[EntitySource]}:page::*`];
 
 		for (const pattern of patterns) {
 			let cursor = "0";
