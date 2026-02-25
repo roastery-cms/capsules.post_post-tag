@@ -1,15 +1,15 @@
 import { describe, it, expect, beforeEach } from "vitest";
-import { CountPostTasUseCase } from "./count-post-tags.use-case";
+import { CountPostTagsUseCase } from "./count-post-tags.use-case";
 import { PostTagRepository } from "@/infra/repositories/test/post-tag.repository";
 import { PostTag } from "@/domain/post-tag";
 
 describe("CountPostTagUseCase", () => {
-	let useCase: CountPostTasUseCase;
+	let useCase: CountPostTagsUseCase;
 	let repository: PostTagRepository;
 
 	beforeEach(async () => {
 		repository = new PostTagRepository();
-		useCase = new CountPostTasUseCase(repository);
+		useCase = new CountPostTagsUseCase(repository);
 
 		// Populate with some data
 		await repository.create(PostTag.make({ name: "Tag 1" }));

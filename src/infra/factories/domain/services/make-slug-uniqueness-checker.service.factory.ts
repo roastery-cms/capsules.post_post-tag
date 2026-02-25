@@ -1,8 +1,9 @@
 import type { IPostTagUniquenessCheckerService } from "@/domain/types/services";
 import { SlugUniquenessCheckerService } from "@caffeine/domain/services";
-import { makePostTagRepository } from "@/infra/factories/repositories";
+import type { IPostTagReader } from "@/domain/types/post-tag-reader.interface";
 
-export function makeSlugUniquenessCheckerService(): IPostTagUniquenessCheckerService {
-	const repository = makePostTagRepository();
+export function makeSlugUniquenessCheckerService(
+	repository: IPostTagReader,
+): IPostTagUniquenessCheckerService {
 	return new SlugUniquenessCheckerService(repository);
 }

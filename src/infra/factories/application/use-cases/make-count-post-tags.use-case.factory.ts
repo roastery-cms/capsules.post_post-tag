@@ -1,7 +1,8 @@
-import { CountPostTasUseCase } from "@/application/use-cases/count-post-tags.use-case";
-import { makePostTagRepository } from "@/infra/factories/repositories";
+import { CountPostTagsUseCase } from "@/application/use-cases/count-post-tags.use-case";
+import type { IPostTagReader } from "@/domain/types/post-tag-reader.interface";
 
-export function makeCountPostTagsUseCase(): CountPostTasUseCase {
-	const repository = makePostTagRepository();
-	return new CountPostTasUseCase(repository);
+export function makeCountPostTagsUseCase(
+	repository: IPostTagReader,
+): CountPostTagsUseCase {
+	return new CountPostTagsUseCase(repository);
 }

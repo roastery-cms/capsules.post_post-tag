@@ -2,7 +2,7 @@ import type { IPostTagReader } from "@/domain/types/post-tag-reader.interface";
 import { GetNumberOfPagesService } from "@caffeine/application/services";
 import type { ICountItems } from "@caffeine/application/types";
 
-export class CountPostTasUseCase {
+export class CountPostTagsUseCase {
 	public constructor(private readonly reader: IPostTagReader) {}
 
 	public async run(): Promise<ICountItems> {
