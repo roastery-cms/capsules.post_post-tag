@@ -1,4 +1,4 @@
-import { describe, expect, it, beforeEach } from "vitest";
+import { describe, expect, it, beforeEach } from "bun:test";
 import { PostTagRepository } from "./post-tag.repository";
 import { PostTag } from "@/domain/post-tag";
 
@@ -206,7 +206,7 @@ describe("PostTagRepository (Test)", () => {
 
 	describe("findMany", () => {
 		it("should return empty array when no tags exist", async () => {
-			const tags = await repository.findMany(0);
+			const tags = await repository.findMany(1);
 
 			expect(tags).toEqual([]);
 		});
@@ -226,7 +226,7 @@ describe("PostTagRepository (Test)", () => {
 			await repository.create(tag1);
 			await repository.create(tag2);
 
-			const tags = await repository.findMany(0);
+			const tags = await repository.findMany(1);
 
 			expect(tags).toHaveLength(2);
 
@@ -255,8 +255,8 @@ describe("PostTagRepository (Test)", () => {
 				await repository.create(tag);
 			}
 
-			const firstPage = await repository.findMany(0);
-			const secondPage = await repository.findMany(1);
+			const firstPage = await repository.findMany(1);
+			const secondPage = await repository.findMany(2);
 
 			expect(firstPage).toHaveLength(MAX_ITEMS_PER_QUERY);
 			expect(secondPage).toHaveLength(5);

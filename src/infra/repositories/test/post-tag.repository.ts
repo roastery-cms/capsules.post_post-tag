@@ -5,89 +5,93 @@ import type { IUnpackedPostTag } from "@/domain/types/unpacked-post-tag.interfac
 import { MAX_ITEMS_PER_QUERY } from "@caffeine/constants";
 
 export class PostTagRepository implements IPostTagRepository {
-	findManyByIds(ids: string[]): Promise<Array<IPostTag | null>> {
-		return Promise.all(ids.map((id) => this.findById(id)));
-	}
+    private postTags: IUnpackedPostTag[];
 
-	private postTags: IUnpackedPostTag[] = [];
+    constructor() {
+        this.postTags = [];
+    }
 
-	async create(data: IPostTag): Promise<void> {
-		this.postTags.push({
-			id: data.id,
-			createdAt: data.createdAt,
-			updatedAt: data.updatedAt,
-			...this.unpack(data),
-		});
-	}
+    findManyByIds(ids: string[]): Promise<Array<IPostTag | null>> {
+        return Promise.all(ids.map((id) => this.findById(id)));
+    }
 
-	async findById(id: string): Promise<IPostTag | null> {
-		const targetPostTag = this.postTags.find((tag) => tag.id === id);
+    async create(data: IPostTag): Promise<void> {
+        this.postTags.push({
+            id: data.id,
+            createdAt: data.createdAt,
+            updatedAt: data.updatedAt,
+            ...this.unpack(data),
+        });
+    }
 
-		if (!targetPostTag) return null;
+    async findById(id: string): Promise<IPostTag | null> {
+        const targetPostTag = this.postTags.find((tag) => tag.id === id);
 
-		return this.toDomain(targetPostTag);
-	}
+        if (!targetPostTag) return null;
 
-	async findBySlug(slug: string): Promise<IPostTag | null> {
-		const targetPostTag = this.postTags.find((tag) => tag.slug === slug);
+        return this.toDomain(targetPostTag);
+    }
 
-		if (!targetPostTag) return null;
+    async findBySlug(slug: string): Promise<IPostTag | null> {
+        const targetPostTag = this.postTags.find((tag) => tag.slug === slug);
 
-		return this.toDomain(targetPostTag);
-	}
+        if (!targetPostTag) return null;
 
-	async findMany(page: number): Promise<IPostTag[]> {
-		const skip = MAX_ITEMS_PER_QUERY * page;
-		const take = MAX_ITEMS_PER_QUERY;
+        return this.toDomain(targetPostTag);
+    }
 
-		return this.postTags
-			.slice(skip, skip + take)
-			.map((tag) => this.toDomain(tag));
-	}
+    async findMany(page: number): Promise<IPostTag[]> {
+        const skip = MAX_ITEMS_PER_QUERY * (page - 1);
+        const take = MAX_ITEMS_PER_QUERY;
 
-	async update(data: IPostTag): Promise<void> {
-		const index = this.postTags.findIndex((tag) => tag.id === data.id);
+        return this.postTags
+            .slice(skip, skip + take)
+            .map((tag) => this.toDomain(tag));
+    }
 
-		if (index === -1) return;
+    async update(data: IPostTag): Promise<void> {
+        const index = this.postTags.findIndex((tag) => tag.id === data.id);
 
-		this.postTags[index] = {
-			id: data.id,
-			createdAt: data.createdAt,
-			updatedAt: data.updatedAt,
-			...this.unpack(data),
-		};
-	}
+        if (index === -1) return;
 
-	private toDomain(tag: IUnpackedPostTag): IPostTag {
-		const { id: tagId, createdAt, updatedAt, ...props } = tag;
-		return PostTag.make(props, { id: tagId, createdAt, updatedAt });
-	}
+        this.postTags[index] = {
+            id: data.id,
+            createdAt: data.createdAt,
+            updatedAt: data.updatedAt,
+            ...this.unpack(data),
+        };
+    }
 
-	private unpack(
-		tag: IPostTag,
-	): Omit<IUnpackedPostTag, "id" | "createdAt" | "updatedAt"> {
-		return {
-			name: tag.name,
-			slug: tag.slug,
-			hidden: tag.hidden,
-		};
-	}
+    private toDomain(tag: IUnpackedPostTag): IPostTag {
+        const { id: tagId, createdAt, updatedAt, ...props } = tag;
+        return PostTag.make(props, { id: tagId, createdAt, updatedAt });
+    }
 
-	async count(): Promise<number> {
-		return this.postTags.length;
-	}
+    private unpack(
+        tag: IPostTag,
+    ): Omit<IUnpackedPostTag, "id" | "createdAt" | "updatedAt"> {
+        return {
+            name: tag.name,
+            slug: tag.slug,
+            hidden: tag.hidden,
+        };
+    }
 
-	/**
-	 * Clears all stored post tags. Useful for resetting state between tests.
-	 */
-	clear(): void {
-		this.postTags = [];
-	}
+    async count(): Promise<number> {
+        return this.postTags.length;
+    }
 
-	/**
-	 * Gets all stored post tags. Useful for assertions in tests.
-	 */
-	getAll(): IUnpackedPostTag[] {
-		return [...this.postTags];
-	}
+    /**
+     * Clears all stored post tags. Useful for resetting state between tests.
+     */
+    clear(): void {
+        this.postTags = [];
+    }
+
+    /**
+     * Gets all stored post tags. Useful for assertions in tests.
+     */
+    getAll(): IUnpackedPostTag[] {
+        return [...this.postTags];
+    }
 }

@@ -21,7 +21,7 @@ describe("FindManyPostTagsUseCase", () => {
 	});
 
 	it("should return paginated results with count and totalPages", async () => {
-		const result = await useCase.run(0);
+		const result = await useCase.run(1);
 
 		expect(result.count).toBe(3);
 		expect(result.totalPages).toBe(1);
@@ -38,7 +38,7 @@ describe("FindManyPostTagsUseCase", () => {
 	});
 
 	it("should return all fields for each tag in the list", async () => {
-		const result = await useCase.run(0);
+		const result = await useCase.run(1);
 
 		for (const tag of result.value) {
 			expect(tag.id).toBeDefined();
