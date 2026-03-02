@@ -1,1 +1,1 @@
-export { makePostTagRepository } from "./post-tag.repository.factory";
+export { makePostTagRepository } from "./make-post-tag.repository.factory";

@@ -1,74 +1,79 @@
 import { PostTag } from "@/domain/post-tag";
 import type { IPostTag } from "@/domain/types";
 import type { IPostTagRepository } from "@/domain/types/post-tag.repository.interface";
-import { prisma } from "@caffeine-packages/post.db.prisma-drive";
-import { SafePrisma } from "@caffeine-packages/post.db.prisma-drive/decorators";
 import { MAX_ITEMS_PER_QUERY } from "@caffeine/constants";
 import { PrismaPostTagMapper } from "./prisma-post-tag-mapper";
 import { Mapper } from "@caffeine/entity";
 import { EntitySource } from "@caffeine/entity/symbols";
+import type { PrismaClient } from "@caffeine-adapters/post";
+import { SafePrisma } from "@caffeine-adapters/post/decorators";
 
 export class PostTagRepository implements IPostTagRepository {
-	@SafePrisma(PostTag[EntitySource])
-	async create(_data: IPostTag): Promise<void> {
-		await prisma.postTag.create({ data: Mapper.toDTO(_data) });
-	}
+    public constructor(private readonly prisma: PrismaClient) {}
 
-	@SafePrisma(PostTag[EntitySource])
-	async findById(id: string): Promise<IPostTag | null> {
-		const targetPostTag = await prisma.postTag.findUnique({ where: { id } });
+    @SafePrisma(PostTag[EntitySource])
+    async create(_data: IPostTag): Promise<void> {
+        await this.prisma.postTag.create({ data: Mapper.toDTO(_data) });
+    }
 
-		if (!targetPostTag) return null;
+    @SafePrisma(PostTag[EntitySource])
+    async findById(id: string): Promise<IPostTag | null> {
+        const targetPostTag = await this.prisma.postTag.findUnique({
+            where: { id },
+        });
 
-		return PrismaPostTagMapper.run(targetPostTag);
-	}
+        if (!targetPostTag) return null;
 
-	@SafePrisma(PostTag[EntitySource])
-	async findBySlug(slug: string): Promise<IPostTag | null> {
-		const targetPostTag = await prisma.postTag.findUnique({
-			where: { slug },
-		});
+        return PrismaPostTagMapper.run(targetPostTag);
+    }
 
-		if (!targetPostTag) return null;
+    @SafePrisma(PostTag[EntitySource])
+    async findBySlug(slug: string): Promise<IPostTag | null> {
+        const targetPostTag = await this.prisma.postTag.findUnique({
+            where: { slug },
+        });
 
-		return PrismaPostTagMapper.run(targetPostTag);
-	}
+        if (!targetPostTag) return null;
 
-	@SafePrisma(PostTag[EntitySource])
-	async findMany(page: number): Promise<IPostTag[]> {
-		return (
-			await prisma.postTag.findMany({
-				skip: MAX_ITEMS_PER_QUERY * (page - 1),
-				take: MAX_ITEMS_PER_QUERY,
-				orderBy: [{ createdAt: "asc" }],
-			})
-		).map((item) => PrismaPostTagMapper.run(item));
-	}
+        return PrismaPostTagMapper.run(targetPostTag);
+    }
 
-	@SafePrisma(PostTag[EntitySource])
-	async findManyByIds(ids: string[]): Promise<Array<IPostTag | null>> {
-		if (ids.length === 0) return [];
+    @SafePrisma(PostTag[EntitySource])
+    async findMany(page: number): Promise<IPostTag[]> {
+        return (
+            await this.prisma.postTag.findMany({
+                skip: MAX_ITEMS_PER_QUERY * (page - 1),
+                take: MAX_ITEMS_PER_QUERY,
+                orderBy: [{ createdAt: "asc" }],
+            })
+        ).map((item) => PrismaPostTagMapper.run(item));
+    }
 
-		const tags = await prisma.postTag.findMany({
-			where: { id: { in: ids } },
-		});
+    @SafePrisma(PostTag[EntitySource])
+    async findManyByIds(ids: string[]): Promise<Array<IPostTag | null>> {
+        if (ids.length === 0) return [];
 
-		const tagMap = new Map<string, IPostTag>();
+        const tags = await this.prisma.postTag.findMany({
+            where: { id: { in: ids } },
+        });
 
-		for (const tag of tags) tagMap.set(tag.id, PrismaPostTagMapper.run(tag));
+        const tagMap = new Map<string, IPostTag>();
 
-		return ids.map((id) => tagMap.get(id) ?? null);
-	}
+        for (const tag of tags)
+            tagMap.set(tag.id, PrismaPostTagMapper.run(tag));
 
-	@SafePrisma(PostTag[EntitySource])
-	async update(_data: IPostTag): Promise<void> {
-		const { id, ...data } = Mapper.toDTO(_data);
+        return ids.map((id) => tagMap.get(id) ?? null);
+    }
 
-		await prisma.postTag.update({ where: { id }, data });
-	}
+    @SafePrisma(PostTag[EntitySource])
+    async update(_data: IPostTag): Promise<void> {
+        const { id, ...data } = Mapper.toDTO(_data);
 
-	@SafePrisma(PostTag[EntitySource])
-	count(): Promise<number> {
-		return prisma.postTag.count();
-	}
+        await this.prisma.postTag.update({ where: { id }, data });
+    }
+
+    @SafePrisma(PostTag[EntitySource])
+    count(): Promise<number> {
+        return this.prisma.postTag.count();
+    }
 }

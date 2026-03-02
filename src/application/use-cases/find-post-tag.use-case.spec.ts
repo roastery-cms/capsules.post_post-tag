@@ -1,33 +1,47 @@
-import { describe, it, expect, vi, beforeEach } from "vitest";
+import { describe, it, expect, mock, beforeEach } from "bun:test";
 import { FindPostTagUseCase } from "./find-post-tag.use-case";
 import { PostTag } from "@/domain/post-tag";
 import { makeEntity } from "@caffeine/entity/factories";
 import { generateUUID } from "@caffeine/entity/helpers";
 import type { FindEntityByTypeUseCase } from "@caffeine/application/use-cases";
+import type { UnpackedPostTagDTO } from "@/domain/dtos";
+import type { IPostTag } from "@/domain/types";
+import type { IPostTagReader } from "@/domain/types/post-tag-reader.interface";
 
 describe("FindPostTagUseCase", () => {
-	let useCase: FindPostTagUseCase;
-	let findEntityByType: FindEntityByTypeUseCase<any, any, any>;
+    let useCase: FindPostTagUseCase;
+    let mockRun: ReturnType<typeof mock>;
 
-	beforeEach(() => {
-		findEntityByType = {
-			run: vi.fn(),
-		} as unknown as FindEntityByTypeUseCase<any, any, any>;
-		useCase = new FindPostTagUseCase(findEntityByType);
-	});
+    beforeEach(() => {
+        mockRun = mock();
+        const findEntityByType = {
+            run: mockRun,
+        } as unknown as FindEntityByTypeUseCase<
+            typeof UnpackedPostTagDTO,
+            IPostTag,
+            IPostTagReader
+        >;
+        useCase = new FindPostTagUseCase(findEntityByType);
+    });
 
-	it("should find a post tag by id", async () => {
-		const id = generateUUID();
-		const props = makeEntity();
-		props.id = id;
-		const postTag = PostTag.make({ name: "Tag 1" }, props);
+    it("should delegate to findEntityByType with the correct source", async () => {
+        const id = generateUUID();
+        const props = makeEntity();
+        props.id = id;
+        const postTag = PostTag.make({ name: "Tag 1" }, props);
 
-		vi.mocked(findEntityByType.run).mockResolvedValue(postTag);
+        mockRun.mockResolvedValue(postTag);
 
-		const result = await useCase.run(id);
+        const result = await useCase.run(id);
 
-		expect(findEntityByType.run).toHaveBeenCalledWith(id, "post@post-tag");
-		expect(result.id).toBe(id);
-		expect(result.name).toBe("Tag 1");
-	});
+        expect(mockRun).toHaveBeenCalledWith(id, "post@post-tag");
+        expect(result.id).toBe(id);
+        expect(result.name).toBe("Tag 1");
+    });
+
+    it("should propagate errors from findEntityByType", async () => {
+        mockRun.mockRejectedValue(new Error("Not found"));
+
+        await expect(useCase.run(generateUUID())).rejects.toThrow("Not found");
+    });
 });

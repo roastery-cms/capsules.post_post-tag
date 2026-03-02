@@ -1,158 +1,165 @@
-import { describe, expect, it } from "vitest";
+import { describe, expect, it } from "bun:test";
 import { PostTag } from "./post-tag";
 import { InvalidPropertyException } from "@caffeine/errors/domain";
 import { makeEntity } from "@caffeine/entity/factories";
+import { EntitySource } from "@caffeine/entity/symbols";
 
 describe("PostTag Entity", () => {
-	it("should be able to create a new post tag", () => {
-		const postTag = PostTag.make({
-			name: "Valid Tag",
-			slug: "valid-tag",
-			hidden: false,
-		});
-
-		expect(postTag).toBeInstanceOf(PostTag);
-		expect(postTag.name).toBe("Valid Tag");
-		expect(postTag.slug).toBe("valid-tag");
-		expect(postTag.hidden).toBe(false);
-		expect(postTag.id).toBeDefined();
-		expect(typeof postTag.createdAt).toBe("string");
-		expect(postTag.updatedAt).toBeFalsy();
-	});
-
-	it("should derive slug from name when slug is not provided", () => {
-		const postTag = PostTag.make({
-			name: "Auto Slug Tag",
-			hidden: false,
-		});
-
-		expect(postTag.slug).toBe("auto-slug-tag");
-	});
-
-	it("should default hidden to false when not provided", () => {
-		const postTag = PostTag.make({
-			name: "Tag Without Hidden",
-			slug: "tag-without-hidden",
-		});
-
-		expect(postTag.hidden).toBe(false);
-	});
-
-	it("should throw error if name is empty", () => {
-		expect(() => {
-			PostTag.make({
-				name: "",
-				slug: "valid-slug",
+	describe("make", () => {
+		it("should create a post tag with all properties", () => {
+			const postTag = PostTag.make({
+				name: "Valid Tag",
+				slug: "valid-tag",
 				hidden: false,
 			});
-		}).toThrow(InvalidPropertyException);
-	});
 
-	it("should rename the tag without changing the slug", () => {
-		const postTag = PostTag.make({
-			name: "Original Name",
-			slug: "original",
-			hidden: false,
+			expect(postTag).toBeInstanceOf(PostTag);
+			expect(postTag.name).toBe("Valid Tag");
+			expect(postTag.slug).toBe("valid-tag");
+			expect(postTag.hidden).toBe(false);
+			expect(postTag.id).toBeDefined();
+			expect(typeof postTag.createdAt).toBe("string");
+			expect(postTag.updatedAt).toBeFalsy();
 		});
 
-		postTag.rename("New Name");
+		it("should derive slug from name when slug is not provided", () => {
+			const postTag = PostTag.make({ name: "Auto Slug Tag" });
 
-		expect(postTag.name).toBe("New Name");
-		expect(postTag.slug).toBe("original");
-	});
-
-	it("should reslug without changing the name", () => {
-		const postTag = PostTag.make({
-			name: "Keep This Name",
-			slug: "old-slug",
-			hidden: false,
+			expect(postTag.slug).toBe("auto-slug-tag");
 		});
 
-		postTag.reslug("new-slug-value");
+		it("should slugify the name with uppercase and special characters", () => {
+			const postTag = PostTag.make({ name: "Hello World! @2024" });
 
-		expect(postTag.name).toBe("Keep This Name");
-		expect(postTag.slug).toBe("new-slug-value");
-	});
-
-	it("should toggle visibility", () => {
-		const postTag = PostTag.make({
-			name: "Tag",
-			slug: "tag",
-			hidden: false,
+			expect(postTag.slug).toBe("hello-world-2024");
 		});
 
-		postTag.changeVisibility(true);
-		expect(postTag.hidden).toBe(true);
+		it("should default hidden to false when not provided", () => {
+			const postTag = PostTag.make({
+				name: "Tag Without Hidden",
+				slug: "tag-without-hidden",
+			});
 
-		postTag.changeVisibility(false);
-		expect(postTag.hidden).toBe(false);
-	});
-
-	it("should update updatedAt when modified", () => {
-		const postTag = PostTag.make({
-			name: "Tag",
-			slug: "tag",
-			hidden: false,
+			expect(postTag.hidden).toBe(false);
 		});
 
-		const initialUpdatedAt = postTag.updatedAt;
-
-		postTag.rename("Updated Tag");
-
-		expect(postTag.updatedAt).not.toBe(initialUpdatedAt);
-		expect(typeof postTag.updatedAt).toBe("string");
-	});
-
-	it("should update updatedAt when reslugged", () => {
-		const postTag = PostTag.make({
-			name: "Tag",
-			slug: "tag",
-			hidden: false,
+		it("should throw InvalidPropertyException if name is empty", () => {
+			expect(() => {
+				PostTag.make({ name: "", slug: "valid-slug", hidden: false });
+			}).toThrow(InvalidPropertyException);
 		});
 
-		const initialUpdatedAt = postTag.updatedAt;
+		it("should restore entity from persisted data (rehydration)", () => {
+			const entityProps = {
+				...makeEntity(),
+				updatedAt: new Date().toISOString(),
+			};
 
-		postTag.reslug("new-slug");
+			const postTag = PostTag.make(
+				{ name: "Rehydrated Tag", slug: "rehydrated-tag", hidden: true },
+				entityProps,
+			);
 
-		expect(postTag.updatedAt).not.toBe(initialUpdatedAt);
-		expect(typeof postTag.updatedAt).toBe("string");
+			expect(postTag.id).toBe(entityProps.id);
+			expect(postTag.createdAt).toBe(entityProps.createdAt);
+			expect(postTag.updatedAt).toBe(entityProps.updatedAt);
+			expect(postTag.name).toBe("Rehydrated Tag");
+			expect(postTag.slug).toBe("rehydrated-tag");
+			expect(postTag.hidden).toBe(true);
+		});
 	});
 
-	it("should update updatedAt when visibility is toggled", () => {
-		const postTag = PostTag.make({
-			name: "Tag",
-			slug: "tag",
-			hidden: false,
+	describe("EntitySource", () => {
+		it("should expose the correct source identifier on the class", () => {
+			expect(PostTag[EntitySource]).toBe("post@post-tag");
+		});
+	});
+
+	describe("rename", () => {
+		it("should update the name without changing the slug", () => {
+			const postTag = PostTag.make({
+				name: "Original Name",
+				slug: "original",
+				hidden: false,
+			});
+
+			postTag.rename("New Name");
+
+			expect(postTag.name).toBe("New Name");
+			expect(postTag.slug).toBe("original");
 		});
 
-		const initialUpdatedAt = postTag.updatedAt;
+		it("should set updatedAt after renaming", () => {
+			const postTag = PostTag.make({ name: "Tag", slug: "tag" });
+			const initialUpdatedAt = postTag.updatedAt;
 
-		postTag.changeVisibility(true);
+			postTag.rename("Updated Tag");
 
-		expect(postTag.updatedAt).not.toBe(initialUpdatedAt);
-		expect(typeof postTag.updatedAt).toBe("string");
+			expect(postTag.updatedAt).not.toBe(initialUpdatedAt);
+			expect(typeof postTag.updatedAt).toBe("string");
+		});
+
+		it("should throw InvalidPropertyException if new name is empty", () => {
+			const postTag = PostTag.make({ name: "Tag", slug: "tag" });
+
+			expect(() => postTag.rename("")).toThrow(InvalidPropertyException);
+		});
 	});
 
-	it("should create a post tag with custom entity props (rehydration)", () => {
-		const entityProps = {
-			...makeEntity(),
-			updatedAt: new Date().toISOString(),
-		};
+	describe("reslug", () => {
+		it("should update the slug without changing the name", () => {
+			const postTag = PostTag.make({
+				name: "Keep This Name",
+				slug: "old-slug",
+				hidden: false,
+			});
 
-		const postTag = PostTag.make(
-			{
-				name: "Rehydrated Tag",
-				slug: "rehydrated-tag",
-				hidden: true,
-			},
-			entityProps,
-		);
+			postTag.reslug("new-slug-value");
 
-		expect(postTag.id).toBe(entityProps.id);
-		expect(postTag.createdAt).toBe(entityProps.createdAt);
-		expect(postTag.updatedAt).toBe(entityProps.updatedAt);
-		expect(postTag.name).toBe("Rehydrated Tag");
-		expect(postTag.slug).toBe("rehydrated-tag");
-		expect(postTag.hidden).toBe(true);
+			expect(postTag.name).toBe("Keep This Name");
+			expect(postTag.slug).toBe("new-slug-value");
+		});
+
+		it("should set updatedAt after reslugging", () => {
+			const postTag = PostTag.make({ name: "Tag", slug: "tag" });
+			const initialUpdatedAt = postTag.updatedAt;
+
+			postTag.reslug("new-slug");
+
+			expect(postTag.updatedAt).not.toBe(initialUpdatedAt);
+			expect(typeof postTag.updatedAt).toBe("string");
+		});
+
+		it("should throw InvalidPropertyException if new slug is empty", () => {
+			const postTag = PostTag.make({ name: "Tag", slug: "tag" });
+
+			expect(() => postTag.reslug("")).toThrow(InvalidPropertyException);
+		});
+	});
+
+	describe("changeVisibility", () => {
+		it("should toggle visibility", () => {
+			const postTag = PostTag.make({
+				name: "Tag",
+				slug: "tag",
+				hidden: false,
+			});
+
+			postTag.changeVisibility(true);
+			expect(postTag.hidden).toBe(true);
+
+			postTag.changeVisibility(false);
+			expect(postTag.hidden).toBe(false);
+		});
+
+		it("should set updatedAt after changing visibility", () => {
+			const postTag = PostTag.make({ name: "Tag", slug: "tag" });
+			const initialUpdatedAt = postTag.updatedAt;
+
+			postTag.changeVisibility(true);
+
+			expect(postTag.updatedAt).not.toBe(initialUpdatedAt);
+			expect(typeof postTag.updatedAt).toBe("string");
+		});
 	});
 });
