@@ -23,3 +23,5 @@ export function PostTagRoutes(data: IControllersWithAuth) {
         .use(FindManyPostTagsController(unauthControllerArgs))
         .use(UpdatePostTagController(authControllerArgs));
 }
+
+export type PostTagRoutes = ReturnType<typeof PostTagRoutes>;
