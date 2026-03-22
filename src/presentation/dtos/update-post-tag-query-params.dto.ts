@@ -1,5 +1,5 @@
-import { t } from "@caffeine/models";
-import { BooleanDTO } from "@caffeine/models/dtos/primitives";
+import { BooleanDTO } from "@roastery/beans/collections/dtos";
+import { t } from "@roastery/terroir";
 
 export const UpdatePostTagQueryParamsDTO = t.Object({
 	"update-slug": t.Optional(BooleanDTO),

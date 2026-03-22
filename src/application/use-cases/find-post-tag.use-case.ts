@@ -2,8 +2,8 @@ import { PostTag } from "@/domain";
 import type { UnpackedPostTagDTO } from "@/domain/dtos";
 import type { IPostTag } from "@/domain/types";
 import type { IPostTagReader } from "@/domain/types/post-tag-reader.interface";
-import type { FindEntityByTypeUseCase } from "@caffeine/application/use-cases";
-import { EntitySource } from "@caffeine/entity/symbols";
+import { EntitySource } from "@roastery/beans/entity/symbols";
+import type { FindEntityByTypeUseCase } from "@roastery/seedbed/application/use-cases";
 
 export class FindPostTagUseCase {
 	public constructor(

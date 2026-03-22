@@ -1,7 +1,7 @@
 import { PostTag } from "@/domain";
 import type { IPostTag, IUnpackedPostTag } from "@/domain/types";
-import { InvalidPropertyException } from "@caffeine/errors/domain";
-import { UnexpectedCacheValueException } from "@caffeine/errors/infra";
+import { InvalidPropertyException } from "@roastery/terroir/exceptions/domain";
+import { UnexpectedCacheValueException } from "@roastery/terroir/exceptions/infra";
 
 export const CachedPostTagMapper = {
 	run(key: string, data: string | IUnpackedPostTag): IPostTag {

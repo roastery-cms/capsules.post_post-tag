@@ -1,8 +1,8 @@
 import { describe, it, expect, beforeEach } from "bun:test";
 import { CreatePostTagUseCase } from "./create-post-tag.use-case";
 import { PostTagRepository } from "@/infra/repositories/test/post-tag.repository";
-import { SlugUniquenessCheckerService } from "@caffeine/domain/services";
-import { ResourceAlreadyExistsException } from "@caffeine/errors/application";
+import { SlugUniquenessCheckerService } from "@roastery/seedbed/domain/services";
+import { ResourceAlreadyExistsException } from "@roastery/terroir/exceptions/application";
 
 describe("CreatePostTagUseCase", () => {
 	let useCase: CreatePostTagUseCase;

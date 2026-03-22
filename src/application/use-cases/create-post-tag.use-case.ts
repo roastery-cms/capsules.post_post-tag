@@ -1,9 +1,9 @@
 import type { CreatePostTagDTO } from "../dtos/create-post-tag.dto";
-import { ResourceAlreadyExistsException } from "@caffeine/errors/application";
 import { PostTag } from "@/domain/post-tag";
 import type { IPostTagWriter } from "@/domain/types/post-tag-writer.interface";
-import { EntitySource } from "@caffeine/entity/symbols";
 import type { IPostTagUniquenessCheckerService } from "@/domain/types/services";
+import { EntitySource } from "@roastery/beans/entity/symbols";
+import { ResourceAlreadyExistsException } from "@roastery/terroir/exceptions/application";
 
 export class CreatePostTagUseCase {
 	public constructor(

@@ -2,7 +2,7 @@ import { describe, it, beforeEach, expect } from "bun:test";
 import { bootstrap } from "../dev/bootstrap";
 import { faker } from "@faker-js/faker";
 import { treaty } from "@elysiajs/eden";
-import { slugify } from "@caffeine/entity/helpers";
+import { slugify } from "@roastery/beans/entity/helpers";
 
 type App = Awaited<ReturnType<typeof bootstrap>>;
 
@@ -46,10 +46,7 @@ describe("CreatePostTagController", () => {
 		const options = await authenticate();
 		const tagName = faker.word.noun();
 
-		const { data } = await api["post-tags"].post(
-			{ name: tagName },
-			options,
-		);
+		const { data } = await api["post-tags"].post({ name: tagName }, options);
 
 		expect(data).toMatchObject({
 			name: tagName,
@@ -106,15 +103,9 @@ describe("CreatePostTagController", () => {
 	it("should generate different slugs for different names", async () => {
 		const options = await authenticate();
 
-		const first = await api["post-tags"].post(
-			{ name: "Alpha Tag" },
-			options,
-		);
+		const first = await api["post-tags"].post({ name: "Alpha Tag" }, options);
 
-		const second = await api["post-tags"].post(
-			{ name: "Beta Tag" },
-			options,
-		);
+		const second = await api["post-tags"].post({ name: "Beta Tag" }, options);
 
 		expect(first.status).toBe(201);
 		expect(second.status).toBe(201);

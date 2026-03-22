@@ -1,8 +1,8 @@
 import { describe, expect, it } from "bun:test";
 import { PostTag } from "./post-tag";
-import { InvalidPropertyException } from "@caffeine/errors/domain";
-import { makeEntity } from "@caffeine/entity/factories";
-import { EntitySource } from "@caffeine/entity/symbols";
+import { makeEntity } from "@roastery/beans/entity/factories";
+import { InvalidPropertyException } from "@roastery/terroir/exceptions/domain";
+import { EntitySource } from "@roastery/beans/entity/symbols";
 
 describe("PostTag Entity", () => {
 	describe("make", () => {

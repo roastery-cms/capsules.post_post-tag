@@ -1,16 +1,20 @@
 import type { IMakePostTag, IPostTag } from "./types";
-import { Entity } from "@caffeine/entity";
-import { BooleanVO, DefinedStringVO, SlugVO } from "@caffeine/value-objects";
-import type { EntityDTO } from "@caffeine/entity/dtos";
+import { UnpackedPostTagSchema } from "./schemas";
+import { Entity } from "@roastery/beans";
 import {
 	EntityContext,
 	EntitySchema,
 	EntitySource,
-} from "@caffeine/entity/symbols";
-import { makeEntity } from "@caffeine/entity/factories";
-import { AutoUpdate } from "@caffeine/entity/decorators";
-import type { Schema } from "@caffeine/schema";
-import { UnpackedPostTagSchema } from "./schemas";
+} from "@roastery/beans/entity/symbols";
+import type { Schema } from "@roastery/terroir/schema";
+import {
+	BooleanVO,
+	DefinedStringVO,
+	SlugVO,
+} from "@roastery/beans/collections/value-objects";
+import type { EntityDTO } from "@roastery/beans/entity/dtos";
+import { makeEntity } from "@roastery/beans/entity/factories";
+import { AutoUpdate } from "@roastery/beans/entity/decorators";
 
 export class PostTag extends Entity<UnpackedPostTagSchema> implements IPostTag {
 	public override readonly [EntitySource]: string = "post@post-tag";

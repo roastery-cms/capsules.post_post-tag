@@ -3,13 +3,13 @@ import type { UpdatePostTagDTO } from "../dtos/update-post-tag.dto";
 import type { FindPostTagUseCase } from "./find-post-tag.use-case";
 import type { IPostTag } from "@/domain/types";
 import { PostTag } from "@/domain";
+import type { IPostTagUniquenessCheckerService } from "@/domain/types/services";
+import { EntitySource } from "@roastery/beans/entity/symbols";
 import {
 	InvalidOperationException,
 	ResourceAlreadyExistsException,
-} from "@caffeine/errors/application";
-import { slugify } from "@caffeine/entity/helpers";
-import { EntitySource } from "@caffeine/entity/symbols";
-import type { IPostTagUniquenessCheckerService } from "@/domain/types/services";
+} from "@roastery/terroir/exceptions/application";
+import { slugify } from "@roastery/beans/entity/helpers";
 
 export class UpdatePostTagUseCase {
 	public constructor(

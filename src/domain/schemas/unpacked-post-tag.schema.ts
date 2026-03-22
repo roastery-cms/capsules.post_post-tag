@@ -1,4 +1,4 @@
-import { Schema } from "@caffeine/schema";
+import { Schema } from "@roastery/terroir/schema";
 import { UnpackedPostTagDTO } from "../dtos";
 
 export const UnpackedPostTagSchema: Schema<typeof UnpackedPostTagDTO> =

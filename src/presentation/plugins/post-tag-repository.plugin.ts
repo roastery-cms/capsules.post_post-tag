@@ -1,8 +1,8 @@
-import Elysia from "elysia";
 import type { IPostTagRepository } from "@/domain/types";
+import { barista } from "@roastery/barista";
 
 export function PostTagRepositoryPlugin(repository: IPostTagRepository) {
-	return new Elysia({
+	return barista({
 		name: "postTagRepository",
 	}).decorate("postTagRepository", repository);
 }

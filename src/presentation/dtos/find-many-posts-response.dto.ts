@@ -1,5 +1,5 @@
 import { UnpackedPostTagDTO } from "@/domain/dtos";
-import { t } from "@caffeine/models";
+import { t } from "@roastery/terroir";
 
 export const FindManyPostsResponseDTO = t.Array(UnpackedPostTagDTO, {
 	description: "A paginated list of post tags.",

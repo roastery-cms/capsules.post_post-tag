@@ -1,6 +1,6 @@
 import type { IPostTagUniquenessCheckerService } from "@/domain/types/services";
-import { SlugUniquenessCheckerService } from "@caffeine/domain/services";
 import type { IPostTagReader } from "@/domain/types/post-tag-reader.interface";
+import { SlugUniquenessCheckerService } from "@roastery/seedbed/domain/services";
 
 export function makeSlugUniquenessCheckerService(
 	repository: IPostTagReader,

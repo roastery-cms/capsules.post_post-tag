@@ -1,20 +1,20 @@
 import { describe, it, expect, beforeEach, mock } from "bun:test";
 import { UpdatePostTagUseCase } from "./update-post-tag.use-case";
 import { PostTagRepository } from "@/infra/repositories/test/post-tag.repository";
-import { SlugUniquenessCheckerService } from "@caffeine/domain/services";
 import { FindPostTagUseCase } from "./find-post-tag.use-case";
-import {
-	InvalidOperationException,
-	ResourceAlreadyExistsException,
-} from "@caffeine/errors/application";
-import type { FindEntityByTypeUseCase } from "@caffeine/application/use-cases";
 import { PostTag } from "@/domain";
-import { makeEntity } from "@caffeine/entity/factories";
-import { generateUUID } from "@caffeine/entity/helpers";
 import type { UnpackedPostTagDTO } from "@/domain/dtos";
 import type { IPostTag } from "@/domain/types";
 import type { IPostTagReader } from "@/domain/types/post-tag-reader.interface";
 import type { IPostTagUniquenessCheckerService } from "@/domain/types/services";
+import type { FindEntityByTypeUseCase } from "@roastery/seedbed/application/use-cases";
+import { SlugUniquenessCheckerService } from "@roastery/seedbed/domain/services";
+import { makeEntity } from "@roastery/beans/entity/factories";
+import { generateUUID } from "@roastery/beans/entity/helpers";
+import {
+	InvalidOperationException,
+	ResourceAlreadyExistsException,
+} from "@roastery/terroir/exceptions/application";
 
 describe("UpdatePostTagUseCase", () => {
 	let useCase: UpdatePostTagUseCase;
@@ -128,11 +128,7 @@ describe("UpdatePostTagUseCase", () => {
 			const storedTag = await createStoredTag("Old Name", "old-name");
 
 			await expect(
-				useCase.run(
-					storedTag.id,
-					{ name: "New Name", slug: "new-slug" },
-					true,
-				),
+				useCase.run(storedTag.id, { name: "New Name", slug: "new-slug" }, true),
 			).rejects.toThrow(InvalidOperationException);
 		});
 

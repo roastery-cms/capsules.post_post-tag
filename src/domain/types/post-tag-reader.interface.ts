@@ -1,9 +1,9 @@
-import type { UnpackedPostTagSchema } from "../schemas";
-import type { IPostTag } from "./post-tag.interface";
 import type {
 	ICanReadId,
 	ICanReadSlug,
-} from "@caffeine/domain/types/repositories";
+} from "@roastery/seedbed/domain/types/repositories";
+import type { UnpackedPostTagSchema } from "../schemas";
+import type { IPostTag } from "./post-tag.interface";
 
 export interface IPostTagReader
 	extends ICanReadId<UnpackedPostTagSchema, IPostTag>,

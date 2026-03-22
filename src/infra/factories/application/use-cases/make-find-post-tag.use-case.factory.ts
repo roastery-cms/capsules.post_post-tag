@@ -2,7 +2,7 @@ import { FindPostTagUseCase } from "@/application/use-cases/find-post-tag.use-ca
 import type { UnpackedPostTagDTO } from "@/domain/dtos";
 import type { IPostTag } from "@/domain/types";
 import type { IPostTagReader } from "@/domain/types/post-tag-reader.interface";
-import { FindEntityByTypeUseCase } from "@caffeine/application/use-cases";
+import { FindEntityByTypeUseCase } from "@roastery/seedbed/application/use-cases";
 
 export function makeFindPostTagUseCase(
 	repository: IPostTagReader,

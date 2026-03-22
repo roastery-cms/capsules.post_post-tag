@@ -1,5 +1,5 @@
-import { EntityDTO } from "@caffeine/entity/dtos";
-import { t } from "@caffeine/models";
+import { EntityDTO } from "@roastery/beans/entity/dtos";
+import { t } from "@roastery/terroir";
 
 export const UnpackedPostTagDTO = t.Composite(
 	[

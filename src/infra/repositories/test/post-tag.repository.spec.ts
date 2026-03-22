@@ -1,6 +1,7 @@
 import { describe, expect, it, beforeEach } from "bun:test";
 import { PostTagRepository } from "./post-tag.repository";
 import { PostTag } from "@/domain/post-tag";
+import { MAX_ITEMS_PER_QUERY } from "@roastery/seedbed/constants";
 
 describe("PostTagRepository (Test)", () => {
 	let repository: PostTagRepository;
@@ -240,9 +241,6 @@ describe("PostTagRepository (Test)", () => {
 		});
 
 		it("should paginate results correctly", async () => {
-			// Import to get the actual value
-			const { MAX_ITEMS_PER_QUERY } = await import("@caffeine/constants");
-
 			// Create enough tags to span multiple pages
 			const totalTags = MAX_ITEMS_PER_QUERY + 5;
 

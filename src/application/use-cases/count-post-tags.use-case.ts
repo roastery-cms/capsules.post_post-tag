@@ -1,6 +1,6 @@
 import type { IPostTagReader } from "@/domain/types/post-tag-reader.interface";
-import { GetNumberOfPagesService } from "@caffeine/application/services";
-import type { ICountItems } from "@caffeine/application/types";
+import { GetNumberOfPagesService } from "@roastery/seedbed/application/services";
+import type { ICountItems } from "@roastery/seedbed/application/types";
 
 export class CountPostTagsUseCase {
 	public constructor(private readonly reader: IPostTagReader) {}
