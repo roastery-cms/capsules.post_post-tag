@@ -1,33 +1,33 @@
-import Elysia from "elysia";
 import PostTypeTags from "../tags";
 import { makePostTagRepository } from "@/infra/factories/repositories";
 import { PostTagRoutes } from "../routes";
 import { PostTypeDependenciesDTO } from "@/infra/dependencies";
 import { PostTagRepositoryPlugin } from "../plugins";
 import type { IPostTagRepository } from "@/domain/types";
-import { CaffeineEnv } from "@roastery-capsules/env";
+import { baristaEnv } from "@roastery-capsules/env";
 import { CacheEnvDependenciesDTO } from "@roastery-adapters/cache/dtos";
 import { AuthEnvDependenciesDTO } from "@roastery-capsules/auth/dtos";
-import { CaffeineErrorHandler } from "@roastery-capsules/api-error-handler";
+import { baristaErrorHandler } from "@roastery-capsules/api-error-handler";
 import { baristaResponseMapper } from "@roastery-capsules/api-response-mapper";
 import { cache } from "@roastery-adapters/cache";
 import { postAdapter as roasteryPostAdapter } from "@roastery-adapters/post/plugins";
 import { UnknownException } from "@roastery/terroir/exceptions";
 import { GetAccessController } from "@roastery-capsules/auth/plugins/controllers";
-import { CaffeineApiDocs } from "@roastery-capsules/api-docs";
+import { baristaApiDocs } from "@roastery-capsules/api-docs";
 import RoasteryAuthTags from "@roastery-capsules/auth/plugins/tags";
+import { barista } from "@roastery/barista";
 
 export async function bootstrap(open: boolean = false) {
-	const app = new Elysia({ name: "@caffeine" })
+	const app = barista({ name: "@roastery" })
 		.use(
-			CaffeineEnv(
+			baristaEnv(
 				CacheEnvDependenciesDTO,
 				AuthEnvDependenciesDTO,
 				PostTypeDependenciesDTO,
 			),
 		)
 		.use(baristaResponseMapper)
-		.use(CaffeineErrorHandler)
+		.use(baristaErrorHandler)
 		.use((app) => {
 			const { CACHE_PROVIDER, REDIS_URL } = app.decorator.env;
 
@@ -101,9 +101,9 @@ export async function bootstrap(open: boolean = false) {
 			);
 		})
 		.use(
-			CaffeineApiDocs(NODE_ENV === "DEVELOPMENT", `http://localhost:${PORT}`, {
+			baristaApiDocs(NODE_ENV === "DEVELOPMENT", `http://localhost:${PORT}`, {
 				info: {
-					title: "Caffeine",
+					title: "Roastery CMS",
 					version: "1.0",
 					contact: {
 						email: "alanreisanjo@gmail.com",
@@ -111,7 +111,7 @@ export async function bootstrap(open: boolean = false) {
 						url: "https://hoyasumii.dev",
 					},
 					description:
-						"A RESTful API for managing Post Types within the Caffeine CMS platform. This microservice is responsible for creating, retrieving, updating, and deleting Post Types, handling global uniqueness through slugs, schema management for diverse content structures, and toggleable highlight states.",
+						"A RESTful API for managing Post Types within the Roastery CMS platform. This microservice is responsible for creating, retrieving, updating, and deleting Post Types, handling global uniqueness through slugs, schema management for diverse content structures, and toggleable highlight states.",
 				},
 				tags: [RoasteryAuthTags, PostTypeTags],
 			}),
@@ -120,7 +120,7 @@ export async function bootstrap(open: boolean = false) {
 			if (open) {
 				app.listen(app.decorator.env.PORT, () => {
 					console.log(
-						`🦊 Server is running at: http://localhost:${app.decorator.env.PORT}`,
+						`☕️ Server is running at: http://localhost:${app.decorator.env.PORT}`,
 					);
 				});
 			}

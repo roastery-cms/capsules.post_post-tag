@@ -1,12 +1,32 @@
 {
 	"name": "@roastery-capsules/post.post-tag",
-	"description": "",
-	"version": "0.0.0",
+	"description": "Post tag management capsule for the Roastery CMS ecosystem — CRUD operations with slug generation, pagination, and optional caching.",
+	"version": "0.0.1",
 	"author": {
 		"name": "Alan Reis",
 		"email": "alanreisanjo@gmail.com",
 		"url": "https://github.com/Hoyasumii"
 	},
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/roastery-cms/capsules.post_post-tag"
+	},
+	"license": "MIT",
+	"keywords": [
+		"roastery",
+		"capsule",
+		"cms",
+		"post-tag",
+		"tag-management",
+		"slug",
+		"elysia",
+		"bun",
+		"typescript",
+		"prisma",
+		"rest-api",
+		"clean-architecture",
+		"domain-driven-design"
+	],
 	"typesVersions": {
 		"*": {
 			"*": [
@@ -26,7 +46,7 @@
 	],
 	"type": "module",
 	"scripts": {
-		"build": "biome check --fix && tsup 'src/**/index.ts' --format cjs,esm --dts --tsconfig tsconfig.build.json --clean",
+		"build": "knip && biome check --fix && tsup 'src/**/index.ts' --format cjs,esm --dts --tsconfig tsconfig.build.json --clean",
 		"test:unit": "bun test --env-file=.env.testing",
 		"test:coverage": "bun test --env-file=.env.testing --coverage",
 		"setup": "bun run build && bun link",
@@ -38,7 +58,8 @@
 		"@commitlint/config-conventional": "^20.4.1",
 		"@elysiajs/eden": "^1.4.8",
 		"@faker-js/faker": "^10.2.0",
-		"husky": "^9.1.7"
+		"husky": "^9.1.7",
+		"knip": "^6.0.3"
 	},
 	"peerDependencies": {
 		"@types/bun": "latest",
@@ -48,11 +69,11 @@
 	"dependencies": {
 		"@roastery-adapters/cache": "^0.0.4",
 		"@roastery-adapters/post": "^0.0.1",
-		"@roastery-capsules/api-docs": "^0.0.2",
-		"@roastery-capsules/api-error-handler": "^0.0.2",
+		"@roastery-capsules/api-docs": "^0.0.3",
+		"@roastery-capsules/api-error-handler": "^0.0.4",
 		"@roastery-capsules/api-response-mapper": "^0.0.2",
 		"@roastery-capsules/auth": "^0.0.1",
-		"@roastery-capsules/env": "^0.0.3",
+		"@roastery-capsules/env": "^0.0.4",
 		"@roastery/barista": "^0.0.5",
 		"@roastery/beans": "^0.0.2",
 		"@roastery/seedbed": "^0.0.2",
