@@ -1,7 +1,7 @@
 {
 	"name": "@roastery-capsules/post.post-tag",
 	"description": "Post tag management capsule for the Roastery CMS ecosystem — CRUD operations with slug generation, pagination, and optional caching.",
-	"version": "0.0.3",
+	"version": "0.0.4",
 	"author": {
 		"name": "Alan Reis",
 		"email": "alanreisanjo@gmail.com",

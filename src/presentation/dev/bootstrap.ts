@@ -1,7 +1,7 @@
 import PostTypeTags from "../tags";
 import { makePostTagRepository } from "@/infra/factories/repositories";
 import { PostTagRoutes } from "../routes";
-import { PostTypeDependenciesDTO } from "@/infra/dependencies";
+import { PostTagDependenciesDTO } from "@/infra/dependencies";
 import { PostTagRepositoryPlugin } from "../plugins";
 import type { IPostTagRepository } from "@/domain/types";
 import { baristaEnv } from "@roastery-capsules/env";
@@ -23,7 +23,7 @@ export async function bootstrap(open: boolean = false) {
 			baristaEnv(
 				CacheEnvDependenciesDTO,
 				AuthEnvDependenciesDTO,
-				PostTypeDependenciesDTO,
+				PostTagDependenciesDTO,
 			),
 		)
 		.use(baristaResponseMapper)
